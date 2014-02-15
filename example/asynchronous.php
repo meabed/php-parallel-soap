@@ -1,9 +1,13 @@
 <?php
+/**
+ * The test soap Server is Located @ http://meabed.net/soap/test.php
+ */
+
 /** the main soap class */
 require_once('../src/SoapClient.php');
 
-/** @var $wsdl This is the test server i have generated to test the class */
-$wsdl = "http://localhost/wsdl/demo3.php?WSDL";
+/** @var string $wsdl, This is the test server i have generated to test the class */
+$wsdl = "http://meabed.net/soap/test.php?WSDL";
 /** @var array $options , array of options for the soap request */
 $options = array(
     'connection_timeout' => 40,
@@ -13,8 +17,11 @@ $options = array(
 /** @var SoapClientAsync $client New Soap client instance */
 $client = new SoapClientAsync($wsdl, $options);
 
-/** You can set debug mode to true to see curl verbose response if you run the script from command line */
-$client::$_debug = false;
+/**
+ * You can set debug mode to true to see curl verbose response if you run the script from command line
+ * @default false
+ */
+$client::$_debug = true;
 
 /** @var string $session , SessionId required in SoapOperations */
 $session = null;
@@ -30,9 +37,16 @@ catch (Exception $e) {
     print 'Exception: ' . $ex->faultcode . ' - ' . $ex->getMessage() . "\n";
 }
 
-/** set SoapClient Mode to asynchronous mode, This will allow opening as many as connections to the host and perform all request at once so you don't need to wait for consecutive calls to performed after each other */
+/**
+ * set SoapClient Mode to asynchronous mode.
+ * This will allow opening as many as connections to the host and perform all
+ * request at once so you don't need to wait for consecutive calls to performed after each other
+ * @default is false AND it get reset back to FALSE after each $client->run();
+ *
+ */
 $client::$_async = true;
 
+/** @var array $requestIds */
 $requestIds = array();
 
 /** in the next for loop i will make 5 soap request */
