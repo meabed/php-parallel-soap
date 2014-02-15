@@ -4,7 +4,9 @@ The purpose of this project is to have an Asynchronous SoapClient that allow us 
 
 Almost all the companies that provide services using SoapServer and alot of them provide asynchronous Soap Api but Usually it very poor and it lack the real-time response and its poor comparing to the synchronous Soap Api.
 
-So This class will allow you to be able to use different asynchronous Soap Implementation! that work with Synchronous Soap Api !
+I personally have faced this issue many times dealing with 3rd party service providers specially in eCommerce field ( Email marketing, Data mining, etc.. most of other third party tools ) So This class is great help and great tool to use !!
+
+This class will allow you to be able to use different asynchronous Soap Implementation! that work with Synchronous Soap Api !
 
 See the [**Examples**](https://github.com/Meabed/asynchronous-soap/tree/master/example) to see how to use it.
 
