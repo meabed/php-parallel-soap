@@ -141,14 +141,20 @@ class SoapClientAsync extends SoapClient
             }
         } else {
             /** generate curl session and add the soap requests to execute it later  */
-            parent::__call($method, $args);
+            try{
+                parent::__call($method, $args);
+                $result = static::$_lastRequestId;
+            } catch (SoapFault $ex) {
+                /** catch SoapFault [is not a valid method for this service] and return null */
+                $result = null;
+            }
             /**
              * Return the Request ID to the calling method
              * This next 2 lines should be custom implementation based on your solution.
              * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call to be able to get the response with it
              */
-            $result = new stdClass();
-            $result->{$method . 'Return'} = static::$_lastRequestId;
+            //$result = new stdClass();
+            //$result->{$method . 'Return'} = static::$_lastRequestId;
         }
         return $result;
     }
@@ -278,10 +284,11 @@ class SoapClientAsync extends SoapClient
                 $resultObj = parent::__call(static::$_actions[$id], array());
                 /**
                  * Return the Request ID to the calling method
-                 * This next 2 lines should be custom implementation based on your solution.
+                 * This next lines should be custom implementation based on your solution.
                  * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call to be able to get the response with it
                  */
-                $result[$id] = $resultObj->{static::$_actions[$id] . 'Return'};
+                //$result[$id] = $resultObj->{static::$_actions[$id] . 'Return'};
+                $result[$id] = $resultObj;
             } catch (SoapFault $ex) {
                 $result[$id] = $ex;
             }
