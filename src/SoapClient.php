@@ -144,21 +144,21 @@ class SoapClientAsync extends SoapClient
             /** generate curl session and add the soap requests to execute it later  */
             try{
                 parent::__call($method, $args);
+                /**
+                 * Return the Request ID to the calling method
+                 * This next 2 lines should be custom implementation based on your solution.
+                 *
+                 * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
+                 * to be able to get the response with it
+                 * @note check the example file to understand what to write here
+                 */
+                //$result = new stdClass();
+                //$result->{$method . 'Return'} = static::$_lastRequestId;
                 $result = static::$_lastRequestId;
             } catch (SoapFault $ex) {
                 /** catch any SoapFault [is not a valid method for this service] and return null */
                 $result = $method.' - '.$ex->getCode().' - '.$ex->getMessage().' - '.rand();
             }
-            /**
-             * Return the Request ID to the calling method
-             * This next 2 lines should be custom implementation based on your solution.
-             *
-             * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
-             * to be able to get the response with it
-             * @note check the example file to understand what to write here
-             */
-            //$result = new stdClass();
-            //$result->{$method . 'Return'} = static::$_lastRequestId;
         }
         return $result;
     }

@@ -6,7 +6,7 @@ Almost all the companies that provide services using SoapServer and alot of them
 
 So This class will allow you to be able to use different asynchronous Soap Implementation! that work with Synchronous Soap Api !
 
-See the [**Example Folder**](https://github.com/Meabed/asynchronous-soap/tree/master/example) to see how to use it.
+See the [**Examples**](https://github.com/Meabed/asynchronous-soap/tree/master/example) to see how to use it.
 
 ### Features
 - Client can work in Asynchronous (multi) and Synchronous (single) mode.

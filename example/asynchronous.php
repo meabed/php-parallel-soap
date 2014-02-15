@@ -122,7 +122,15 @@ foreach ($responses as $id => $response) {
         /** SoapResponse is Okay */
         /**
          * I have made the SoapServer always return the Response in class attribute public $Return
-         * Usually the soap server has pattern to
+         * Usually the soap server has pattern to return response for all method calls
+         *
+         * @example
+         * if i call method getUser the return object will be $response->getUserResponse
+         * getName => $response->getNameResponse
+         * logout => $response->logoutResponse
+         *
+         * @Important please check SoapClientAsync NOTES in @line 153 and @line 295 For auto implementation of the soap response pattern
+         *
          */
         print 'Response is : ' . $response->Return . "\n";
 
