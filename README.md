@@ -10,6 +10,8 @@ This class will allow you to be able to use different asynchronous Soap Implemen
 
 See the [**Examples**](https://github.com/Meabed/asynchronous-soap/tree/master/example) to see how to use it.
 
+Example [**WSDL**](http://meabed.net/soap/test.php?WSDL&readable)
+
 ### Features
 - Client can work in Asynchronous (multi) and Synchronous (single) mode.
 - Multiple calls using curl_multi_exec, Doesn't wait for soap consecutive calls ! This client will save alot of time and resources doing multiple requests at same time !
