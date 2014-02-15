@@ -107,6 +107,8 @@ print_r($requestIds);
 /** @var $responses array that hold the response array as array( requestId => responseObject ); */
 $responses = $client->run();
 
+
+/** Loop through the responses and get the results */
 foreach ($responses as $id => $response) {
     /**
      * Handle exception when you using multi request is different than normal requests
