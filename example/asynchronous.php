@@ -4,7 +4,7 @@ require_once('../src/SoapClient.php');
 
 /** @var $wsdl This is the test server i have generated to test the class */
 $wsdl = "http://localhost/wsdl/demo3.php?WSDL";
-/** @var array $options , array of options for the soap request*/
+/** @var array $options , array of options for the soap request */
 $options = array(
     'connection_timeout' => 40,
     'trace'              => true
@@ -50,6 +50,24 @@ for ($i = 0; $i < 5; $i++) {
 /** SoapCall without sessionId that return exception to test the exception handling */
 $requestIds[] = $client->getFullname(array('wrongParam' => 'Dummy'));
 
+/**
+ * This call will throw SoapFault and it will return
+ * string as  ".. Function ("getUnkownMethod") is not a valid method for this service...."
+ * So it will be easy to debug it.
+ *
+ * @note The call will not be executed when $client->run()
+ */
+$requestIds[] = $client->getUnkownMethod(array('wrongParam' => 'Dummy'));
+
+/**
+ * This call will throw SoapFault and it will return
+ * string as  ".. Function ("getAnotherUnkownMethod") is not a valid method for this service...."
+ * So it will be easy to debug it.
+ *
+ * @note The call will not be executed when $client->run()
+ */
+$requestIds[] = $client->getAnotherUnkownMethod(array('dummy' => 'test'));
+
 
 /**
  * Adding another 5 SoapCalls to test different method call
@@ -66,7 +84,7 @@ for ($i = 0; $i < 5; $i++) {
 }
 
 /** You can see the request ids in the variable that will be executed with $client->run() method */
-//print_r($requestIds);
+print_r($requestIds);
 
 /**
  * You can execute certain requests if you pass array of requestIds to $client->run() method as in the example in the comment
@@ -81,12 +99,15 @@ foreach ($responses as $id => $response) {
      * The Client in asynchronous mode already handle the exception and assign the exception object to the result in-case exception occurred
      * So to handle the exception we don't use try{}catch(){} here, but we use instanceof to handle the exceptions as the example below
      */
-    if($response instanceof SoapFault)
-    {
+    if ($response instanceof SoapFault) {
         /** handle the exception here  */
         print 'SoapFault: ' . $response->faultcode . ' - ' . $response->getMessage() . "\n";
-    }else{
+    } else {
         /** SoapResponse is Okay */
+        /**
+         * I have made the SoapServer always return the Response in class attribute public $Return
+         * Usually the soap server has pattern to
+         */
         print 'Response is : ' . $response->Return . "\n";
 
     }

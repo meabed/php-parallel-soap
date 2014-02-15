@@ -145,13 +145,16 @@ class SoapClientAsync extends SoapClient
                 parent::__call($method, $args);
                 $result = static::$_lastRequestId;
             } catch (SoapFault $ex) {
-                /** catch SoapFault [is not a valid method for this service] and return null */
-                $result = null;
+                /** catch any SoapFault [is not a valid method for this service] and return null */
+                $result = $method.' - '.$ex->getCode().' - '.$ex->getMessage().' - '.rand();
             }
             /**
              * Return the Request ID to the calling method
              * This next 2 lines should be custom implementation based on your solution.
-             * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call to be able to get the response with it
+             *
+             * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
+             * to be able to get the response with it
+             * @note check the example file to understand what to write here
              */
             //$result = new stdClass();
             //$result->{$method . 'Return'} = static::$_lastRequestId;
@@ -285,7 +288,10 @@ class SoapClientAsync extends SoapClient
                 /**
                  * Return the Request ID to the calling method
                  * This next lines should be custom implementation based on your solution.
-                 * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call to be able to get the response with it
+                 *
+                 * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
+                 * to be able to get the response with it
+                 * @note check the example file to understand what to write here
                  */
                 //$result[$id] = $resultObj->{static::$_actions[$id] . 'Return'};
                 $result[$id] = $resultObj;
