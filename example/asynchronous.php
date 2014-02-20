@@ -8,7 +8,7 @@ require_once('../src/SoapClient.php');
 
 /** @var string $wsdl, This is the test server i have generated to test the class */
 $wsdl = "http://meabed.net/soap/test.php?WSDL";
-/** @var array $options , array of options for the soap request */
+/** @var array $options , array of options for the soap client */
 $options = array(
     'connection_timeout' => 40,
     'trace'              => true
@@ -21,7 +21,7 @@ $client = new SoapClientAsync($wsdl, $options);
  * You can set debug mode to true to see curl verbose response if you run the script from command line
  * @default false
  */
-$client::$_debug = true;
+$client::$debug = true;
 
 /** @var string $session , SessionId required in SoapOperations */
 $session = null;
@@ -44,7 +44,7 @@ catch (Exception $e) {
  * @default is false AND it get reset back to FALSE after each $client->run();
  *
  */
-$client::$_async = true;
+$client::$async = true;
 
 /** @var array $requestIds */
 $requestIds = array();
@@ -81,6 +81,13 @@ $requestIds[] = $client->getUnkownMethod(array('wrongParam' => 'Dummy'));
  * @note The call will not be executed when $client->run()
  */
 $requestIds[] = $client->getAnotherUnkownMethod(array('dummy' => 'test'));
+
+/**
+ * This call is valid method but it has wrong parameters so it will return normal request id but in the execution
+ * it will return result instance of SoapFault contains the exception
+ * So you can handle it
+ */
+$requestIds[] = $client->getFullname(array('wrongParams' => 'Xyz'));
 
 
 /**

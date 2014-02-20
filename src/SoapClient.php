@@ -11,31 +11,31 @@
 class SoapClientAsync extends SoapClient
 {
     /**  array of all responses in the client */
-    static $_soapResponses = array();
+    static $soapResponses = array();
 
     /**  array of all requests in the client */
-    static $_soapRequests = array();
+    static $soapRequests = array();
 
     /**  array of all requests actions in the client */
-    static $_actions = array();
+    static $actions = array();
 
     /**  string the xml returned from soap call */
-    static $_xmlResponse;
+    static $xmlResponse;
 
     /**  string current method call  */
-    static $_action;
+    static $action;
 
     /**  array of all requestIds  */
-    static $_requestIds;
+    static $requestIds;
 
     /**  string last request id  */
-    static $_lastRequestId;
+    static $lastRequestId;
 
     /**  bool soap asynchronous flag  */
-    static $_async = false;
+    static $async = false;
 
     /**  bool soap verbose flag  */
-    static $_debug = false;
+    static $debug = false;
 
     /**  getResult action constant used for parsing the xml with from parent::__doRequest */
     const GET_RESULT = 'getResult';
@@ -53,31 +53,31 @@ class SoapClientAsync extends SoapClient
      */
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
-        $action = static::$_action;
+        $action = static::$action;
 
         /** return the xml response as its coming from normal soap call */
-        if ($action == static::GET_RESULT && static::$_xmlResponse) {
-            return static::$_xmlResponse;
+        if ($action == static::GET_RESULT && static::$xmlResponse) {
+            return static::$xmlResponse;
         }
 
-        $_soapResponses = & static::$_soapResponses;
-        $_soapRequests = & static::$_soapRequests;
+        $soapResponses = & static::$soapResponses;
+        $soapRequests = & static::$soapRequests;
 
         /** @var $id string represent hashId of each request based on the request body to avoid multiple calls for the same request if exists */
         $id = sha1($location . $request);
         /** if curl is not enabled use parent::__doRequest */
         if (!in_array('curl', get_loaded_extensions())) {
-            if (isset($_soapResponses[$id])) {
-                unset($_soapResponses[$id]);
+            if (isset($soapResponses[$id])) {
+                unset($soapResponses[$id]);
                 return parent::__doRequest($request, $location, $action, $version, $one_way = 0);
             }
-            $_soapRequests[$id] = true;
+            $soapRequests[$id] = true;
             return "";
         }
         /** return response if soap method called for second time with same parameters */
-        if (isset($_soapResponses[$id])) {
-            $data = $_soapResponses[$id];
-            unset($_soapResponses[$id]);
+        if (isset($soapResponses[$id])) {
+            $data = $soapResponses[$id];
+            unset($soapResponses[$id]);
             if ($data instanceof SoapFault) {
                 throw $data;
             }
@@ -98,17 +98,17 @@ class SoapClientAsync extends SoapClient
         curl_setopt($ch, CURLOPT_TIMEOUT, 50);
         curl_setopt($ch, CURLOPT_TIMECONDITION, 50);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_VERBOSE, static::$_debug);
+        curl_setopt($ch, CURLOPT_VERBOSE, static::$debug);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
-        $_soapRequests[$id] = $ch;
+        $soapRequests[$id] = $ch;
 
 
-        static::$_requestIds[$id] = $id;
-        static::$_actions[$id] = $action;
-        static::$_lastRequestId = $id;
+        static::$requestIds[$id] = $id;
+        static::$actions[$id] = $action;
+        static::$lastRequestId = $id;
 
         return "";
     }
@@ -127,13 +127,13 @@ class SoapClientAsync extends SoapClient
     public function __call($method, $args)
     {
         /** set current action to the current method call */
-        static::$_action = $method;
+        static::$action = $method;
 
-        if (!static::$_async) {
+        if (!static::$async) {
             try {
                 parent::__call($method, $args);
                 /** parse the xml response or throw an exception */
-                static::$_xmlResponse = $this->run(array(static::$_lastRequestId));
+                static::$xmlResponse = $this->run(array(static::$lastRequestId));
                 $result = $this->getResponseResult($method, $args);
             } catch (SoapFault $ex) {
                 throw $ex;
@@ -153,8 +153,8 @@ class SoapClientAsync extends SoapClient
                  * @note check the example file to understand what to write here
                  */
                 //$result = new stdClass();
-                //$result->{$method . 'Return'} = static::$_lastRequestId;
-                $result = static::$_lastRequestId;
+                //$result->{$method . 'Return'} = static::$lastRequestId;
+                $result = static::$lastRequestId;
             } catch (SoapFault $ex) {
                 /** catch any SoapFault [is not a valid method for this service] and return null */
                 $result = $method.' - '.$ex->getCode().' - '.$ex->getMessage().' - '.rand();
@@ -164,34 +164,34 @@ class SoapClientAsync extends SoapClient
     }
 
     /**
-     * Execute all or some items from @var static::$_soapRequests
+     * Execute all or some items from @var static::$soapRequests
      *
      * @param array $requestIds
      * @param bool  $partial
      */
     public function doRequests($requestIds = array(), $partial = false)
     {
-        $_allSoapRequests = & static::$_soapRequests;
-        $_soapResponses = & static::$_soapResponses;
+        $allSoapRequests = & static::$soapRequests;
+        $soapResponses = & static::$soapResponses;
 
-        /** Determine if its partial call to execute some requests or execute all the request in $_soapRequests array otherwise */
+        /** Determine if its partial call to execute some requests or execute all the request in $soapRequests array otherwise */
         if ($partial) {
-            $_soapRequests = array_intersect_key($_allSoapRequests, array_flip($requestIds));
+            $soapRequests = array_intersect_key($allSoapRequests, array_flip($requestIds));
         } else {
-            $_soapRequests = & static::$_soapRequests;
+            $soapRequests = & static::$soapRequests;
         }
 
         /** return the response from __doRequest() if curl is not enabled */
         if (!in_array('curl', get_loaded_extensions())) {
-            foreach ($_soapRequests as $id => $ch) {
-                $_soapResponses[$id] = true;
+            foreach ($soapRequests as $id => $ch) {
+                $soapResponses[$id] = true;
             }
-            $_soapRequests = array();
+            $soapRequests = array();
             return;
         }
         /** Initialise curl multi handler and execute the requests  */
         $mh = curl_multi_init();
-        foreach ($_soapRequests as $ch) {
+        foreach ($soapRequests as $ch) {
             curl_multi_add_handle($mh, $ch);
         }
         $active = null;
@@ -207,26 +207,26 @@ class SoapClientAsync extends SoapClient
             }
         }
         /** assign the responses for all requests has been performed */
-        foreach ($_soapRequests as $id => $ch) {
+        foreach ($soapRequests as $id => $ch) {
             try {
-                $_soapResponses[$id] = curl_multi_getcontent($ch);
-                if ($_soapResponses[$id] === null) {
+                $soapResponses[$id] = curl_multi_getcontent($ch);
+                if ($soapResponses[$id] === null) {
                     throw new SoapFault("HTTP", curl_error($ch));
                 }
             } catch (SoapFault $e) {
-                $_soapResponses[$id] = $e;
+                $soapResponses[$id] = $e;
             }
             curl_multi_remove_handle($mh, $ch);
             curl_close($ch);
         }
         curl_multi_close($mh);
 
-        /** unset the request performed from the class instance variable $_soapRequests so we don't request them again */
+        /** unset the request performed from the class instance variable $soapRequests so we don't request them again */
         if (!$partial) {
-            $_soapRequests = array();
+            $soapRequests = array();
         }
-        foreach ($_soapRequests as $id => $ch) {
-            unset($_allSoapRequests[$id]);
+        foreach ($soapRequests as $id => $ch) {
+            unset($allSoapRequests[$id]);
         }
     }
 
@@ -243,27 +243,27 @@ class SoapClientAsync extends SoapClient
         if (is_array($requestIds) && count($requestIds)) {
             $partial = true;
         }
-        $_allSoapResponses = & static::$_soapResponses;
+        $allSoapResponses = & static::$soapResponses;
 
         /** perform all the request */
         $this->doRequests($requestIds, $partial);
 
         /** reset the class to synchronous mode */
-        static::$_async = false;
+        static::$async = false;
 
         /** parse return response of the performed requests  */
         if ($partial) {
-            $_soapResponses = array_intersect_key($_allSoapResponses, array_flip($requestIds));
+            $soapResponses = array_intersect_key($allSoapResponses, array_flip($requestIds));
         } else {
-            $_soapResponses = & static::$_soapResponses;
+            $soapResponses = & static::$soapResponses;
         }
         /** if its one request return the first element in the array */
         if ($partial && count($requestIds) == 1) {
-            $result = $_soapResponses[$requestIds[0]];
-            unset($_allSoapResponses[$requestIds[0]]);
+            $result = $soapResponses[$requestIds[0]];
+            unset($allSoapResponses[$requestIds[0]]);
 
         } else {
-            $result = $this->getMultiResponses($_soapResponses);
+            $result = $this->getMultiResponses($soapResponses);
         }
         return $result;
     }
@@ -277,15 +277,15 @@ class SoapClientAsync extends SoapClient
     public function getMultiResponses($responses = array())
     {
         $result = array();
-        static::$_action = static::GET_RESULT;
+        static::$action = static::GET_RESULT;
         foreach ($responses as $id => $ch) {
             try {
-                static::$_xmlResponse = $ch;
+                static::$xmlResponse = $ch;
                 if($ch instanceof SoapFault)
                 {
                     throw $ch;
                 }
-                $resultObj = parent::__call(static::$_actions[$id], array());
+                $resultObj = parent::__call(static::$actions[$id], array());
                 /**
                  * Return the Request ID to the calling method
                  * This next lines should be custom implementation based on your solution.
@@ -294,15 +294,15 @@ class SoapClientAsync extends SoapClient
                  * to be able to get the response with it
                  * @note check the example file to understand what to write here
                  */
-                //$result[$id] = $resultObj->{static::$_actions[$id] . 'Return'};
+                //$result[$id] = $resultObj->{static::$actions[$id] . 'Return'};
                 $result[$id] = $resultObj;
             } catch (SoapFault $ex) {
                 $result[$id] = $ex;
             }
-            unset(static::$_soapResponses[$id]);
+            unset(static::$soapResponses[$id]);
         }
-        static::$_xmlResponse = '';
-        static::$_action = '';
+        static::$xmlResponse = '';
+        static::$action = '';
         return $result;
     }
     /**
@@ -316,13 +316,13 @@ class SoapClientAsync extends SoapClient
      */
     public function getResponseResult($method, $args)
     {
-        static::$_action = static::GET_RESULT;
+        static::$action = static::GET_RESULT;
         try {
             $result = parent::__call($method, $args);
         } catch (SoapFault $ex) {
             throw $ex;
         }
-        static::$_action = '';
+        static::$action = '';
         return $result;
     }
 }
