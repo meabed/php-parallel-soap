@@ -1,0 +1,11 @@
+{
+    "name": "meabed/asynchronous-soap",
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "Mohamed Meabed",
+            "email": "mo.meabed@gmail.com"
+        }
+    ],
+    "require": {}
+}
