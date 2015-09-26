@@ -44,10 +44,20 @@ class SoapClientAsync extends SoapClient
     /**  bool soap verbose flag  */
     static $debug = false;
 
+    /** @var bool print soap request */
+    public static $printSoapRequest = false;
+
+    /** @var bool exit after print soap */
+    public static $exitAfterPrint = false;
+
+    /**
+     * @var array
+     */
+    public static $sharedCurlData = [];
+
     /**  getResult action constant used for parsing the xml with from parent::__doRequest */
     const GET_RESULT = 'getResult';
-    // Error string that return in the response to check against in the response
-    const ERROR_STR = '*ERROR*';
+    const ERROR_STR  = '*ERROR*';
 
     /**
      * Soap __doRequest() Method with CURL Implementation
@@ -67,6 +77,16 @@ class SoapClientAsync extends SoapClient
         $actionCommand = static::$action;
         $actionMethod  = $action;
 
+        // print xml for debugging testing
+        if ($actionCommand != static::GET_RESULT && self::$printSoapRequest) {
+            // debug the request here
+            echo($this->prettyXml($request));
+            if (self::$exitAfterPrint) {
+                exit;
+            }
+            self::$printSoapRequest = false;
+            self::$exitAfterPrint   = false;
+        }
         // some .NET Servers only accept action method with ns url!! uncomment it if you get error wrong command
         // $actionMethod  = str_ireplace(['http://tempuri.org/IFlightAPI/', 'https://tempuri.org/IFlightAPI/'], '', $action);
         /** return the xml response as its coming from normal soap call */
@@ -113,6 +133,16 @@ class SoapClientAsync extends SoapClient
             'SOAPAction: "' . $action . '"',
             "Content-length: " . strlen($request),
         ];
+        // ssl connection sharing
+        if (empty(static::$sharedCurlData[$location])) {
+            $shOpt = curl_share_init();
+            curl_share_setopt($shOpt, CURLSHOPT_SHARE, CURL_LOCK_DATA_SSL_SESSION);
+            curl_share_setopt($shOpt, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
+            curl_share_setopt($shOpt, CURLSHOPT_SHARE, CURL_LOCK_DATA_COOKIE);
+            static::$sharedCurlData[$location] = $shOpt;
+        }
+
+        $sh = static::$sharedCurlData[$location];
 
         $ch = curl_init();
         /** CURL_OPTIONS  */
@@ -129,6 +159,7 @@ class SoapClientAsync extends SoapClient
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SHARE, $sh);
 
         $soapRequests[$id] = $ch;
 
@@ -371,5 +402,40 @@ class SoapClientAsync extends SoapClient
         static::$action = '';
 
         return $result;
+    }
+
+    /**
+     * Set $printSoapRequest
+     *
+     * @param bool|false $bool
+     * @param bool|false $exit
+     *
+     * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
+     *
+     */
+    public function setPrintXmlRequest($bool = false, $exit = false)
+    {
+        static::$printSoapRequest = $bool;
+        static::$exitAfterPrint   = $exit;
+    }
+
+    /**
+     * Print pretty xml
+     *
+     * @param $request
+     *
+     * @return string
+     *
+     * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
+     *
+     */
+    public function prettyXml($request)
+    {
+        $dom                     = new \DOMDocument();
+        $dom->preserveWhiteSpace = false;
+        $dom->loadXML($request);
+        $dom->formatOutput = true;
+
+        return $dom->saveXml();
     }
 }

@@ -10,7 +10,7 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "type": "library",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Multi curl SoapClient that allow to perform multiple requests to SoapServer",
   "homepage": "https://github.com/Meabed/asynchronous-soap",
   "keywords": [

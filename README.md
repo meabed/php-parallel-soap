@@ -1,6 +1,6 @@
-# Asynchronous Soap Client
+# Asynchronous|Parallel Multi-Curl Soap Client
 
-The purpose of this project is to have an Asynchronous SoapClient that allow us to perform multiple requests to SoapServer.
+Parallel Multi-Curl SoapClient that allow us to perform Parallel multiple requests to SoapServer with CURL.
 
 Almost all the companies that provide services using SoapServer and alot of them provide asynchronous Soap Api but Usually it very poor and it lack the real-time response and its poor comparing to the synchronous Soap Api.
 
@@ -17,6 +17,7 @@ Example [**WSDL**](http://meabed.net/soap/test.php)
 ### Features
 - Client can work in Asynchronous (multi) and Synchronous (single) mode.
 - Multiple calls using **curl_multi_exec**, Doesn't wait for soap consecutive calls ! This client will save alot of time and resources doing multiple requests at same time !
+- SSL / Session Sharing.
 - Each Request has **hash id** which is unique to each request ( If you execute the same request 100 times more, it will have the same hash ) so no duplicate requests
 - Very Easy to debug every single point during the request! also ability to use **CURL_VERBOSE** to debug the connections to the Soap Host
 - Very easy exception handling in **async** mode
