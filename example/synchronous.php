@@ -1,4 +1,4 @@
 <?php
-require_once('../src/SoapClient.php');
+require_once(__DIR__ . '/../src/SoapClient.php');
 
 
