@@ -17,7 +17,8 @@ Example [**WSDL**](http://meabed.net/soap/test.php)
 ### Features
 - Client can work in Asynchronous (multi) and Synchronous (single) mode.
 - Multiple calls using **curl_multi_exec**, Doesn't wait for soap consecutive calls ! This client will save alot of time and resources doing multiple requests at same time !
-- SSL / Session Sharing.
+- **SSL / Session Sharing.**
+- __curl_info meta data in response object.
 - Each Request has **hash id** which is unique to each request ( If you execute the same request 100 times more, it will have the same hash ) so no duplicate requests
 - Very Easy to debug every single point during the request! also ability to use **CURL_VERBOSE** to debug the connections to the Soap Host
 - Very easy exception handling in **async** mode

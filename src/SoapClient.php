@@ -17,6 +17,9 @@ class SoapClientAsync extends SoapClient
     /**  array of all requests in the client */
     static $soapRequests = [];
 
+    /**  array of all curl_info in the client */
+    public static $soapInfo = [];
+
     /**  array of all requests actions in the client */
     static $actions = [];
 
@@ -195,10 +198,15 @@ class SoapClientAsync extends SoapClient
                 static::$xmlResponse = $this->run([static::$lastRequestId]);
                 $result              = $this->getResponseResult($method, $args);
             } catch (\SoapFault $ex) {
-                $ex->lastRequest = self::$requestXml[static::$lastRequestId];
+                $ex->__last_request = null;
+                if (isset(self::$requestXml[static::$lastRequestId])) {
+                    $ex->__last_request          = self::$requestXml[static::$lastRequestId];
+                    $ex->__last_request_gmt_date = gmdate('U');
+                }
                 throw $ex;
             } catch (\Exception $e) {
-                $e->lastRequest = self::$requestXml[static::$lastRequestId];
+                $e->__last_request          = self::$requestXml[static::$lastRequestId];
+                $e->__last_request_gmt_date = gmdate('U');
                 throw $e;
             }
         } else {
@@ -277,6 +285,11 @@ class SoapClientAsync extends SoapClient
         foreach ($soapRequests as $id => $ch) {
             try {
                 $soapResponses[$id] = curl_multi_getcontent($ch);
+                $soapInfo           = curl_getinfo($ch);
+                if ($soapInfo) {
+                    self::$soapInfo[$id] = (object)$soapInfo;
+                }
+
                 // Source: http://stackoverflow.com/questions/14319696/soap-issue-soapfault-exception-client-looks-like-we-got-no-xml-document
                 // $xml                = explode("\r\n", $soapResponses[$id]);
                 // $soapResponses[$id] = preg_replace('/^(\x00\x00\xFE\xFF|\xFF\xFE\x00\x00|\xFE\xFF|\xFF\xFE|\xEF\xBB\xBF)/', "", $xml[0]);
@@ -369,10 +382,10 @@ class SoapClientAsync extends SoapClient
                  */
                 //$result[$id] = $resultObj->{static::$actions[$id] . 'Return'};
                 $result[$id] = $resultObj;
-            } catch (SoapFault $ex) {
-                // attach last request to soap fault error object
-                $ex->lastRequest = self::$requestXml[static::$lastRequestId];
-                $result[$id]     = $ex;
+                $this->addDebugInfo($resultObj, $id);
+            } catch (\SoapFault $ex) {
+                $this->addDebugInfo($ex, static::$lastRequestId);
+                $result[$id] = $ex;
             }
             unset(static::$soapResponses[$id]);
         }
@@ -388,21 +401,60 @@ class SoapClientAsync extends SoapClient
      * @param string $method
      * @param array  $args
      *
-     * @throws SoapFault $ex
+     * @throws \SoapFault $ex
      * @return string $result
      */
     public function getResponseResult($method, $args)
     {
         static::$action = static::GET_RESULT;
         try {
-            $result = parent::__call($method, $args);
-        } catch (SoapFault $ex) {
+            $resultObj = parent::__call($method, $args);
+
+            $id = static::$lastRequestId;
+            $this->addDebugInfo($resultObj, $id);
+
+        } catch (\SoapFault $ex) {
+            $this->addDebugInfo($ex, static::$lastRequestId);
             throw $ex;
         }
         static::$action = '';
 
-        return $result;
+        return $resultObj;
     }
+
+
+    /**
+     * Add curl info to result object
+     *
+     * @param $resultObj
+     * @param $id
+     *
+     * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
+     *
+     */
+    protected function addDebugInfo($resultObj, $id)
+    {
+        if (!is_object($resultObj)) {
+            $resultObj = new \stdClass();
+        }
+        if (!empty(self::$soapInfo[$id])) {
+            $resultObj->__curl_info = self::$soapInfo[$id];
+        }
+
+        if (!empty($this->__last_request)) {
+            $resultObj->__last_request          = self::$requestXml[$id];
+            $resultObj->__last_request_gmt_date = gmdate('U');
+
+        }
+
+        if (!empty($this->__last_response)) {
+            $clean_xml                         = str_ireplace(['SOAP-ENV:', 'SOAP:', 'awss:'], '', $this->__last_response);
+            $xmlObject                         = simplexml_load_string($clean_xml);
+            $resultObj->__last_response_object = $xmlObject;
+            $resultObj->__last_response        = $this->__last_response;
+        }
+    }
+
 
     /**
      * Set $printSoapRequest
