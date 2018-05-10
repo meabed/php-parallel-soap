@@ -53,6 +53,9 @@ class SoapClientAsync extends SoapClient
     /** @var bool exit after print soap */
     public static $exitAfterPrint = false;
 
+    /** @var array header options */
+    public static $curlHeaders = [];
+
     /**
      * @var array
      */
@@ -128,14 +131,19 @@ class SoapClientAsync extends SoapClient
 
             return $data;
         }
+
         /** @var $headers array of headers to be sent with request */
-        $headers = [
-            'Content-type: text/xml',
-            'charset=utf-8',
-            "Accept: text/xml",
-            'SOAPAction: "' . $action . '"',
-            "Content-length: " . strlen($request),
-        ];
+        $headers  = &static::$curlHeaders;
+        if (empty($headers)) {
+            $headers = [
+                'Content-type: text/xml',
+                'charset=utf-8',
+                "Accept: text/xml",
+                'SOAPAction: "' . $action . '"',
+                "Content-length: " . strlen($request),
+            ];
+        }
+
         // ssl connection sharing
         if (empty(static::$sharedCurlData[$location])) {
             $shOpt = curl_share_init();
