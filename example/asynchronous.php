@@ -40,6 +40,7 @@ catch (SoapFault $ex) {
 catch (Exception $e) {
     print 'Exception: ' . $ex->faultcode . ' - ' . $ex->getMessage() . "\n";
 }
+echo($client->__getLastResponse());exit;
 
 /**
  * set SoapClient Mode to asynchronous mode.
