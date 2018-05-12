@@ -43,4 +43,10 @@ class SyncTest extends BaseCase
         $this->assertContains('Hello Her Name', $rs);
     }
 
+    public function testGetFullName()
+    {
+        $rs = $this->asyncSoapClient->GetFullName('demo123456-loggedin', 'Fname', 'Lname');
+        $this->assertContains('Fname Lname', $rs);
+    }
+
 }
