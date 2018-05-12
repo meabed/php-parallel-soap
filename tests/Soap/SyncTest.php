@@ -49,4 +49,19 @@ class SyncTest extends BaseCase
         $this->assertContains('Fname Lname', $rs);
     }
 
+    public function testEchoText()
+    {
+        $rs = $this->asyncSoapClient->EchoText('demo123456-loggedin', 'TEST TEXT');
+        $this->assertContains('TEST TEXT', $rs);
+    }
+
+    // todo
+    // test headers soap action
+    // test curl info / debug data
+    // test parser function
+    // test logger
+    // test pretty xml
+    // test log shipping
+    // test custom headers
+    // add more example with log shipping / result parsing / etc...
 }

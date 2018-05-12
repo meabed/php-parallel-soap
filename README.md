@@ -48,8 +48,14 @@ Example [**WSDL**](https://whispering-meadow-99755.herokuapp.com/wsdl.php)
 - Very Easy to debug every single point during the request! also ability to use **CURL_VERBOSE** to debug the connections to the Soap Host
 - Very easy exception handling in **async** mode
 
+### SOAP Facts
+- SOAP is HTTP Post with structured message in XML Envelope.
+- SOAPAction header is used in web services for various reason, most common
+    - Route request to specific action
+    - Serve Multi-Version of service, if Action Method is part of the XML Envelope
+   
+   
 ## Need Help ?
-
 I'm Always glad ot help and assist. so if you have an idea that could make this project better
 
 Submit git issue or contact me [www.meabed.com](http://meabed.com)

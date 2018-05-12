@@ -30,4 +30,15 @@ class AsyncTest extends BaseCase
         $this->assertEquals('Invalid params', $rs[$req3]->getMessage());
         $this->assertEquals(\SoapFault::class, get_class($rs[$req3]));
     }
+
+    // todo
+    // test headers soap action
+    // test curl info / debug data
+    // test parser function
+    // test logger
+    // test pretty xml
+    // test log shipping
+    // test custom headers
+    // add more example with log shipping / result parsing / etc...
+
 }

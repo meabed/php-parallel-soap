@@ -27,7 +27,7 @@ class BaseCase extends TestCase
                     $ret = $res->FullName;
                     break;
                 default:
-                    $ret = '';
+                    $ret = $res;
             }
             return $ret;
         };
@@ -40,7 +40,7 @@ class BaseCase extends TestCase
             'trace' => true,
             'exceptions' => true,
             'soap_version' => SOAP_1_1,
-            'cache_wsdl' => WSDL_CACHE_NONE,
+            'cache_wsdl' => WSDL_CACHE_MEMORY,
             'encoding' => 'UTF-8',
             'resFn' => $parseResultFn,
         ];

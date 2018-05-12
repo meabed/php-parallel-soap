@@ -12,7 +12,7 @@
   "type": "library",
   "version": "1.0.3",
   "description": "Multi curl SoapClient that allow to perform multiple requests to SoapServer",
-  "homepage": "https://github.com/Meabed/asynchronous-soap",
+  "homepage": "https://github.com/Meabed/php-async-soap",
   "keywords": [
     "Soap",
     "Curl",
@@ -21,6 +21,7 @@
     "Asynchronous"
   ],
   "require": {
+    "ext-soap": "*",
     "ext-curl": "*",
     "psr/log": "~1.0"
   },

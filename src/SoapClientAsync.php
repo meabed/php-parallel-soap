@@ -11,7 +11,7 @@ use Psr\Log\NullLogger;
  * Implements soap with multi server-to-server calls using curl module.
  *
  * @author Mohamed Meabed <mo.meabed@gmail.com>
- * @link   https://github.com/Meabed/asynchronous-soap
+ * @link   https://github.com/Meabed/php-async-soap
  * @note   Check the Example files and read the documentation carefully
  */
 class SoapClientAsync extends \SoapClient

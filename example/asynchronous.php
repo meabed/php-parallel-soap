@@ -23,7 +23,7 @@ $parseResultFn = function ($method, $res) {
             $ret = $res->FullName;
             break;
         default:
-            $ret = '';
+            $ret = $res;
     }
     return $ret;
 };
@@ -33,7 +33,7 @@ $options = [
     'trace' => true,
     'exceptions' => true,
     'soap_version' => SOAP_1_1,
-    'cache_wsdl' => WSDL_CACHE_NONE,
+    'cache_wsdl' => WSDL_CACHE_MEMORY,
     'encoding' => 'UTF-8',
     'resFn' => $parseResultFn,
 ];
