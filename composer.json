@@ -1,13 +1,13 @@
 {
+  "name": "meabed/php-async-soap",
+  "license": "MIT",
   "authors": [
     {
       "name": "Mohamed Meabed",
       "email": "mo.meabed@gmail.com"
     }
   ],
-  "name": "meabed/asynchronous-soap",
-  "license": "MIT",
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "prefer-stable": true,
   "type": "library",
   "version": "1.0.3",
