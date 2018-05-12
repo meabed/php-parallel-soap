@@ -1,23 +1,23 @@
 <p align="center">
   <h3 align="center">Asynchronous, Parallel, Multi-Curl PHP SoapClient </h3>
   <p align="center">
-    <a href="https://travis-ci.org/Meabed/asynchronous-soap">
-      <img src="https://img.shields.io/travis/Meabed/asynchronous-soap.svg?branch=master&style=flat-square" alt="Build Status">
+    <a href="https://travis-ci.org/Meabed/php-async-soap">
+      <img src="https://img.shields.io/travis/Meabed/php-async-soap.svg?branch=master&style=flat-square" alt="Build Status">
     </a>
     <a href="LICENSE.md">
       <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License">
     </a>
-    <a class="badge-align" href="https://www.codacy.com/app/Meabed/asynchronous-soap">
+    <a class="badge-align" href="https://www.codacy.com/app/Meabed/php-async-soap">
       <img src="https://img.shields.io/codacy/grade/266923eec70e41418be8f981a5b4cefe.svg?style=flat-square"/>
     </a>        
-    <a href="https://scrutinizer-ci.com/g/meabed/asynchronous-soap/?branch=master">
-      <img src="https://img.shields.io/scrutinizer/g/meabed/asynchronous-soap/master.svg?style=flat-square" alt="Scrutinizer Code Quality">
+    <a href="https://scrutinizer-ci.com/g/meabed/php-async-soap/?branch=master">
+      <img src="https://img.shields.io/scrutinizer/g/meabed/php-async-soap/master.svg?style=flat-square" alt="Scrutinizer Code Quality">
     </a>
-    <a href="https://codecov.io/gh/meabed/asynchronous-soap">
-      <img src="https://img.shields.io/codecov/c/github/meabed/asynchronous-soap/master.svg?style=flat-square" alt="codecov">
+    <a href="https://codecov.io/gh/meabed/php-async-soap">
+      <img src="https://img.shields.io/codecov/c/github/meabed/php-async-soap/master.svg?style=flat-square" alt="codecov">
     </a>
-    <a href="https://packagist.org/packages/meabed/asynchronous-soap/">
-      <img src="https://img.shields.io/packagist/dm/meabed/asynchronous-soap.svg?style=flat-square" alt="Packagist">
+    <a href="https://packagist.org/packages/meabed/php-async-soap/">
+      <img src="https://img.shields.io/packagist/dm/meabed/php-async-soap.svg?style=flat-square" alt="Packagist">
     </a>
     <a href="https://www.paypal.me/meabed">
       <img src="https://img.shields.io/badge/paypal-donate-179BD7.svg?style=flat-squares" alt="Donate">
@@ -33,7 +33,7 @@ I personally have faced this issue many times dealing with 3rd party service pro
 
 This class will allow you to be able to use different asynchronous Soap Implementation! that work with Synchronous Soap Api!
 
-See the [**Examples**](https://github.com/Meabed/asynchronous-soap/tree/master/example) to see how to use it.
+See the [**Examples**](https://github.com/Meabed/php-async-soap/tree/master/example) to see how to use it.
 
 Read the Comment in the Example files carefully they are all written to help you understand how the client works and what you can do with it and how to customize it to fit your purpose!
 
