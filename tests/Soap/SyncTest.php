@@ -8,7 +8,7 @@ class SyncTest extends BaseCase
 {
     public function testLogin()
     {
-        $rs = $this->asyncSoapClient->login(['demo', '123456']);
+        $rs = $this->asyncSoapClient->Login(['demo', '123456']);
         $this->assertEquals('demo123456-loggedin', $rs);
     }
 
@@ -16,7 +16,7 @@ class SyncTest extends BaseCase
     {
         // invalid session exception
         try {
-            $this->asyncSoapClient->sayHello('demo', '123456');
+            $this->asyncSoapClient->SayHello('demo', '123456');
         } catch (\Exception $e) {
             $this->assertEquals(\SoapFault::class, get_class($e));
             $this->assertContains('Invalid session', $e->getMessage());
@@ -27,7 +27,7 @@ class SyncTest extends BaseCase
     {
         // invalid params exception
         try {
-            $this->asyncSoapClient->sayHello('demo123456-loggedin', null);
+            $this->asyncSoapClient->SayHello('demo123456-loggedin', null);
         } catch (\Exception $e) {
             $this->assertEquals(\SoapFault::class, get_class($e));
             $this->assertContains('Invalid params', $e->getMessage());
@@ -36,10 +36,10 @@ class SyncTest extends BaseCase
 
     public function testSayHello()
     {
-        $rs = $this->asyncSoapClient->sayHello('demo123456-loggedin', 'Someone Name');
+        $rs = $this->asyncSoapClient->SayHello('demo123456-loggedin', 'Someone Name');
         $this->assertContains('Hello Someone Name', $rs);
 
-        $rs = $this->asyncSoapClient->sayHello('demo123456-loggedin', 'Her Name');
+        $rs = $this->asyncSoapClient->SayHello('demo123456-loggedin', 'Her Name');
         $this->assertContains('Hello Her Name', $rs);
     }
 

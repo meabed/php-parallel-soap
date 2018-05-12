@@ -23,7 +23,7 @@ class SoapClientAsync extends \SoapClient
     public $soapRequests = [];
 
     /**  array of all curl_info in the client */
-    public $soapInfo = [];
+    public $curlInfo = [];
 
     /**  array of all requests xml in the client */
     public $requestXmlArr = [];
@@ -61,6 +61,12 @@ class SoapClientAsync extends \SoapClient
     /** @var array curl options */
     public $curlOptions = [];
 
+    /** @var \Closure */
+    public $debugFn;
+
+    /** @var \Closure */
+    public $resFn;
+
     /** @var LoggerInterface */
     public $logger;
 
@@ -70,7 +76,7 @@ class SoapClientAsync extends \SoapClient
     public $sharedCurlData = [];
 
     /**  getRequestResponse action constant used for parsing the xml with from parent::__doRequest */
-    const GET_RESULT = 'getRequestResponseMethod';
+    const GET_RESPONSE_CONST = 'getRequestResponseMethod';
     const ERROR_STR = '*ERROR*';
 
 
@@ -200,11 +206,39 @@ class SoapClientAsync extends \SoapClient
         return $this;
     }
 
+    /**
+     * @return \Closure
+     */
+    public function getDebugFn()
+    {
+        return $this->debugFn;
+    }
+
+    /**
+     * @param \Closure $debugFn
+     * @return SoapClientAsync
+     */
+    public function setDebugFn(\Closure $debugFn)
+    {
+        $this->debugFn = $debugFn;
+        return $this;
+    }
+
 
     public function __construct($wsdl, array $options = null)
     {
         parent::__construct($wsdl, $options);
-        $this->logger = new NullLogger();
+        $this->logger = $options['logger'] ?? new NullLogger();
+        $this->debugFn = $options['debugFn'] ?? function ($res, $id) {
+            };
+        $this->resFn = $options['resFn'] ?? function ($method, $res) {
+                return $res;
+            };
+
+        // cleanup
+        unset($options['logger']);
+        unset($options['debugFn']);
+        unset($options['resFn']);
     }
 
     /**
@@ -221,7 +255,7 @@ class SoapClientAsync extends \SoapClient
      */
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
-        $shouldGetResponse = ($this->soapMethod == static::GET_RESULT);
+        $shouldGetResponse = ($this->soapMethod == static::GET_RESPONSE_CONST);
 
         // print xml for debugging testing
         if ($this->logSoapRequest) {
@@ -328,21 +362,14 @@ class SoapClientAsync extends \SoapClient
             parent::__call($method, $args);
             /** parse the xml response or throw an exception */
             $this->xmlResponse = $this->run([$this->lastRequestId]);
-            $result = $this->getResponseResult($method, $args);
+            $res = $this->getResponseResult($method, $args);
         } catch (\SoapFault $ex) {
-            $ex->__last_request = null;
-            if (isset($this->requestXmlArr[$this->lastRequestId])) {
-                $ex->__last_request = $this->requestXmlArr[$this->lastRequestId];
-                $ex->__last_request_gmt_date = gmdate('U');
-            }
             throw $ex;
         } catch (\Exception $e) {
-            $e->__last_request = $this->requestXmlArr[$this->lastRequestId];
-            $e->__last_request_gmt_date = gmdate('U');
             throw $e;
         }
 
-        return $result;
+        return $res;
     }
 
     /**
@@ -360,17 +387,17 @@ class SoapClientAsync extends \SoapClient
              * Return the Request ID to the calling method
              * This next 2 lines should be custom implementation based on your solution.
              *
-             * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
+             * @var $res string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
              * to be able to get the response with it
              * @note check the example file to understand what to write here
              */
-            $result = $this->lastRequestId;
+            $res = $this->lastRequestId;
         } catch (\Exception $ex) {
             /** catch any SoapFault [is not a valid method for this service] and return null */
-            $result = self::ERROR_STR . ':' . $method . ' - ' . $ex->getCode() . ' - ' . $ex->getMessage() . ' - ' . rand();
+            $res = self::ERROR_STR . ':' . $method . ' - ' . $ex->getCode() . ' - ' . $ex->getMessage() . ' - rand::' . rand();
         }
 
-        return $result;
+        return $res;
     }
 
     /**
@@ -447,9 +474,10 @@ class SoapClientAsync extends \SoapClient
         foreach ($soapRequests as $id => $ch) {
             try {
                 $soapResponses[$id] = curl_multi_getcontent($ch);
-                $soapInfo = curl_getinfo($ch);
-                if ($soapInfo) {
-                    $this->soapInfo[$id] = (object)$soapInfo;
+                // todo if config
+                $curlInfo = curl_getinfo($ch);
+                if ($curlInfo) {
+                    $this->curlInfo[$id] = (object)$curlInfo;
                 }
 
                 // Source: http://stackoverflow.com/questions/14319696/soap-issue-soapfault-exception-client-looks-like-we-got-no-xml-document
@@ -481,7 +509,7 @@ class SoapClientAsync extends \SoapClient
      *
      * @param array $requestIds
      *
-     * @return string $result
+     * @return string $res
      */
     public function run($requestIds = [])
     {
@@ -506,13 +534,13 @@ class SoapClientAsync extends \SoapClient
         }
         /** if its one request return the first element in the array */
         if ($partial && count($requestIds) == 1) {
-            $result = $soapResponses[$requestIds[0]];
+            $res = $soapResponses[$requestIds[0]];
             unset($allSoapResponses[$requestIds[0]]);
         } else {
-            $result = $this->getMultiResponses($soapResponses);
+            $res = $this->getMultiResponses($soapResponses);
         }
 
-        return $result;
+        return $res;
     }
 
     /**
@@ -520,12 +548,12 @@ class SoapClientAsync extends \SoapClient
      *
      * @param array $responses
      *
-     * @return string $result
+     * @return mixed $resArr
      */
     public function getMultiResponses($responses = [])
     {
-        $result = [];
-        $this->soapMethod = static::GET_RESULT;
+        $resArr = [];
+        $this->soapMethod = static::GET_RESPONSE_CONST;
 
         foreach ($responses as $id => $ch) {
             try {
@@ -533,27 +561,28 @@ class SoapClientAsync extends \SoapClient
                 if ($ch instanceof \SoapFault) {
                     throw $ch;
                 }
-                $resultObj = parent::__call($this->soapMethodArr[$id], []);
+                $res = parent::__call($this->soapMethodArr[$id], []);
                 /**
                  * Return the Request ID to the calling method
                  * This next lines should be custom implementation based on your solution.
                  *
-                 * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
+                 * @var $resArr string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
                  * to be able to get the response with it
                  * @note check the example file to understand what to write here
                  */
-                $result[$id] = $resultObj;
-                $this->addDebugInfo($resultObj, $id);
+                $resFn = $this->resFn;
+                $resArr[$id] = $resFn($this->soapMethodArr[$id], $res);
+                $this->addDebugData($res, $id);
             } catch (\SoapFault $ex) {
-                $this->addDebugInfo($ex, $this->lastRequestId);
-                $result[$id] = $ex;
+                $this->addDebugData($ex, $this->lastRequestId);
+                $resArr[$id] = $ex;
             }
             unset($this->soapResponses[$id]);
         }
         $this->xmlResponse = '';
         $this->soapMethod = '';
 
-        return $result;
+        return $resArr;
     }
 
     /**
@@ -564,59 +593,44 @@ class SoapClientAsync extends \SoapClient
      *
      * @throws \SoapFault
      * @throws \Exception
-     * @return string $result
+     * @return string $res
      */
     public function getResponseResult($method, $args)
     {
-        $this->soapMethod = static::GET_RESULT;
+        $this->soapMethod = static::GET_RESPONSE_CONST;
 
         try {
-            $resultObj = parent::__call($method, $args);
+            $res = parent::__call($method, $args);
 
             $id = $this->lastRequestId;
-            $this->addDebugInfo($resultObj, $id);
+            $this->addDebugData($res, $id);
         } catch (\SoapFault $ex) {
-            $this->addDebugInfo($ex, $this->lastRequestId);
+            $this->addDebugData($ex, $this->lastRequestId);
             throw $ex;
         } catch (\Exception $ex) {
-            $this->addDebugInfo($ex, $this->lastRequestId);
+            $this->addDebugData($ex, $this->lastRequestId);
             throw $ex;
         }
         $this->soapMethod = '';
 
-        return $resultObj;
+        $resFn = $this->resFn;
+        return $resFn($method, $res);
     }
 
 
     /**
-     * Add curl info to result object
+     * Add curl info to response object
      *
-     * @param $resultObj
+     * @param $res
      * @param $id
      *
      * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
      *
      */
-    public function addDebugInfo($resultObj, $id)
+    public function addDebugData($res, $id)
     {
-        return;
-        if (!is_object($resultObj)) {
-            $resultObj = new \stdClass();
-        }
-        if (!empty($this->soapInfo[$id])) {
-            $resultObj->__curl_info = $this->soapInfo[$id];
-        }
-
-        if (!empty($this->__last_request)) {
-            $resultObj->__last_request = $this->requestXmlArr[$id];
-            $resultObj->__last_request_gmt_date = gmdate('U');
-        }
-        if (!empty($this->__last_response)) {
-            $clean_xml = str_ireplace(['SOAP-ENV:', 'SOAP:', 'awss:'], '', $this->__last_response);
-            $xmlObject = simplexml_load_string($clean_xml);
-            $resultObj->__last_response_object = $xmlObject;
-            $resultObj->__last_response = $this->__last_response;
-        }
+        $fn = $this->debugFn;
+        $fn($res, $id);
     }
 
     /**
