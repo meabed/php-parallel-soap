@@ -30,10 +30,14 @@ I'm Always glad ot help and assist. so if you have an idea that could make this 
 Submit git issue or contact me [www.meabed.net](http://meabed.net)
 
 
-### How to contribute
+## Contributing
 
-Make a fork, commit to develop branch and make a pull request
+Anyone is welcome to [contribute](CONTRIBUTING.md), however, if you decide to get involved, please take a moment to review the guidelines:
 
-Licence
--------
-[GNU General Public License, version 3 (GPLv3)](http://opensource.org/licenses/gpl-3.0)
+* [Only one feature or change per pull request](CONTRIBUTING.md#only-one-feature-or-change-per-pull-request)
+* [Write meaningful commit messages](CONTRIBUTING.md#write-meaningful-commit-messages)
+* [Follow the existing coding standards](CONTRIBUTING.md#follow-the-existing-coding-standards)
+
+## License
+
+The code is available under the [MIT license](LICENSE.md).

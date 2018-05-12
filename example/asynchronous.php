@@ -1,17 +1,17 @@
 <?php
 /**
- * The test soap Server is Located @ http://meabed.net/soap/test.php
+ * The test soap Server is Located @ https://whispering-meadow-99755.herokuapp.com/wsdl.php
  */
 
 /** the main soap class */
 require_once(__DIR__ . '/../src/SoapClient.php');
 
 /** @var string $wsdl , This is the test server i have generated to test the class */
-$wsdl = "http://meabed.net/soap/test.php?WSDL";
+$wsdl = "https://whispering-meadow-99755.herokuapp.com/wsdl.php";
 /** @var array $options , array of options for the soap client */
 $options = [
     'connection_timeout' => 40,
-    'trace'              => true,
+    'trace' => true,
 ];
 
 /** @var SoapClientAsync $client New Soap client instance */
@@ -22,14 +22,14 @@ $client = new SoapClientAsync($wsdl, $options);
  *
  * @default false
  */
-$client::$debug = true;
+$client::$debug = false;
 
 /** @var string $session , SessionId required in SoapOperations */
 $session = null;
 /** Normal ONE SOAP CALL Using CURL same exact as soap synchronous api calls of any web service */
 try {
     $loginSoapCall = $client->login(['demo', '123456']);
-    $session       = $loginSoapCall->Return;
+    $session = $loginSoapCall;
 } /** catch SoapFault exception if it happens */
 catch (SoapFault $ex) {
     print 'SoapFault: ' . $ex->faultcode . ' - ' . $ex->getMessage() . "\n";
@@ -53,18 +53,11 @@ $requestIds = [];
 
 /** in the next for loop i will make 5 soap request */
 for ($i = 0; $i < 5; $i++) {
-    /** @var $params , method parameters will be used in the test */
-    $params       = [
-        'session'   => $session,
-        'firstName' => 'Mohamed',
-        /** Change the request Body */
-        'lastName'  => 'Meabed ' . $i,
-    ];
-    $requestIds[] = $client->getFullname($params);
+    $requestIds[] = $client->getFullname($session, 'Mo', 'Meabed ' . $i);
 }
 
 /** SoapCall without sessionId that return exception to test the exception handling */
-$requestIds[] = $client->getFullname(['wrongParam' => 'Dummy']);
+$requestIds[] = $client->getFullname('wrongParam', 'Dummy');
 
 /**
  * This call will throw SoapFault and it will return
@@ -73,7 +66,7 @@ $requestIds[] = $client->getFullname(['wrongParam' => 'Dummy']);
  *
  * @note The call will not be executed when $client->run()
  */
-$requestIds[] = $client->getUnkownMethod(['wrongParam' => 'Dummy']);
+$requestIds[] = $client->getUnkownMethod('wrongParam', 'Dummy');
 
 /**
  * This call will throw SoapFault and it will return
@@ -89,7 +82,7 @@ $requestIds[] = $client->getAnotherUnkownMethod(['dummy' => 'test']);
  * it will return result instance of SoapFault contains the exception
  * So you can handle it
  */
-$requestIds[] = $client->getFullname(['wrongParams' => 'Xyz']);
+$requestIds[] = $client->getFullname('wrongParams', 'Xyz');
 
 
 /**
@@ -98,12 +91,7 @@ $requestIds[] = $client->getFullname(['wrongParams' => 'Xyz']);
  */
 for ($i = 0; $i < 5; $i++) {
     /** @var $params , method parameters will be used in the test */
-    $params       = [
-        'session' => $session,
-        /** Change the request Body */
-        'name'    => 'Mohamed ' . $i,
-    ];
-    $requestIds[] = $client->sayHello($params);
+    $requestIds[] = $client->sayHello($session, 'Name ' . $i);
 }
 
 /** You can see the request ids in the variable that will be executed with $client->run() method */
@@ -142,7 +130,6 @@ foreach ($responses as $id => $response) {
          * @Important please check SoapClientAsync NOTES in @line 153 and @line 295 For auto implementation of the soap response pattern
          *
          */
-        print 'Response is : ' . $response->Return . "\n";
-
+        print 'Response is : ' . $response . "\n";
     }
 }
