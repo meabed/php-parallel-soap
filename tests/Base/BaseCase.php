@@ -10,7 +10,7 @@ class BaseCase extends TestCase
     /** @var \Soap\SoapClientAsync */
     public $asyncSoapClient;
 
-    public function __construct(?string $name = null, array $data = [], string $dataName = '')
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
 

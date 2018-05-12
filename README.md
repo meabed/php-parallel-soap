@@ -1,4 +1,29 @@
-# Asynchronous|Parallel Multi-Curl Soap Client
+<p align="center">
+  <h3 align="center">Asynchronous, Parallel, Multi-Curl PHP SoapClient </h3>
+  <p align="center">
+    <a href="https://travis-ci.org/meabed/asynchronous-soap">
+      <img src="https://img.shields.io/travis/meabed/asynchronous-soap.svg?branch=master&style=flat-square" alt="Build Status">
+    </a>
+    <a href="LICENSE.md">
+      <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License">
+    </a>
+    <a class="badge-align" href="https://www.codacy.com/app/Meabed/asynchronous-soap">
+      <img src="https://img.shields.io/codacy/grade/266923eec70e41418be8f981a5b4cefe.svg?style=flat-square"/>
+    </a>        
+    <a href="https://scrutinizer-ci.com/g/meabed/asynchronous-soap/?branch=master">
+      <img src="https://img.shields.io/scrutinizer/g/meabed/asynchronous-soap/master.svg?style=flat-square" alt="Scrutinizer Code Quality">
+    </a>
+    <a href="https://codecov.io/gh/meabed/asynchronous-soap">
+      <img src="https://img.shields.io/codecov/c/github/meabed/asynchronous-soap/master.svg?style=flat-square" alt="codecov">
+    </a>
+    <a href="https://packagist.org/packages/meabed/asynchronous-soap/">
+      <img src="https://img.shields.io/packagist/dm/meabed/asynchronous-soap.svg?style=flat-square" alt="Packagist">
+    </a>
+    <a href="https://www.paypal.me/meabed">
+      <img src="https://img.shields.io/badge/paypal-donate-179BD7.svg?style=flat-squares" alt="Donate">
+    </a>
+  </p>
+</p>
 
 Parallel Multi-Curl SoapClient that allow us to perform Parallel multiple requests to SoapServer with CURL.
 
