@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+
 /**
  * The test soap Server is Located @ https://whispering-meadow-99755.herokuapp.com/wsdl.php
  */
@@ -22,7 +24,7 @@ $client = new \Soap\SoapClientAsync($wsdl, $options);
  *
  * @default false
  */
-$client::$debug = false;
+$client->setDebug(false);
 
 /** @var string $session , SessionId required in SoapOperations */
 $session = null;
@@ -30,6 +32,7 @@ $session = null;
 try {
     $loginSoapCall = $client->login(['demo', '123456']);
     $session = $loginSoapCall;
+    var_dump($session);exit;
 } /** catch SoapFault exception if it happens */
 catch (SoapFault $ex) {
     print 'SoapFault: ' . $ex->faultcode . ' - ' . $ex->getMessage() . "\n";
@@ -46,7 +49,7 @@ catch (Exception $e) {
  * @default is false AND it get reset back to FALSE after each $client->run();
  *
  */
-$client::$async = true;
+$client->setAsync(true);
 
 /** @var array $requestIds */
 $requestIds = [];

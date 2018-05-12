@@ -1,6 +1,10 @@
 <?php
 
 namespace Soap;
+
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+
 /**
  * Asynchronous/Synchronous Soap Class
  *
@@ -13,74 +17,78 @@ namespace Soap;
 class SoapClientAsync extends \SoapClient
 {
     /**  array of all responses in the client */
-    public static $soapResponses = [];
+    public $soapResponses = [];
 
     /**  array of all requests in the client */
-    public static $soapRequests = [];
+    public $soapRequests = [];
 
     /**  array of all curl_info in the client */
-    public static $soapInfo = [];
-
-    /**  array of all requests actions in the client */
-    public static $actions = [];
+    public $soapInfo = [];
 
     /**  array of all requests xml in the client */
-    public static $requestXml = [];
+    public $requestXmlArr = [];
 
     /**  string the xml returned from soap call */
-    public static $xmlResponse;
+    public $xmlResponse;
 
     /**  string current method call  */
-    public static $action;
+    public $soapMethod;
 
-    /**  string current method call  */
-    public static $actionMethod;
+    /**  array of all requests soap methods in the client */
+    public $soapMethodArr = [];
 
     /**  array of all requestIds  */
-    public static $requestIds;
+    public $requestIds;
 
     /**  string last request id  */
-    public static $lastRequestId;
+    public $lastRequestId;
 
     /**  bool soap asynchronous flag  */
-    public static $async = false;
+    public $async = false;
 
     /**  bool soap verbose flag  */
-    public static $debug = false;
+    public $debug = false;
 
-    /** @var bool print soap request */
-    public static $printSoapRequest = false;
+    /** @var bool log soap request */
+    public $logSoapRequest = false;
 
-    /** @var bool exit after print soap */
-    public static $exitAfterPrint = false;
+    /** @var bool log pretty xml */
+    public $logPrettyXml = false;
 
-    /** @var array header options */
-    public static $curlHeaders = [];
+    /** @var array curl header options */
+    public $curlHeaders = [];
+
+    /** @var array curl options */
+    public $curlOptions = [];
+
+    /** @var LoggerInterface */
+    public $logger;
 
     /**
      * @var array
      */
-    public static $sharedCurlData = [];
+    public $sharedCurlData = [];
 
-    /**  getResult action constant used for parsing the xml with from parent::__doRequest */
-    const GET_RESULT = 'getResult';
+    /**  getRequestResponse action constant used for parsing the xml with from parent::__doRequest */
+    const GET_RESULT = 'getRequestResponseMethod';
     const ERROR_STR = '*ERROR*';
+
 
     /**
      * @return mixed
      */
     public function getAsync()
     {
-        return self::$async;
+        return $this->async;
     }
 
     /**
      * @param mixed $async
-     * @return $this
+     * @return SoapClientAsync
      */
     public function setAsync($async)
     {
-        self::$async = $async;
+        $this->async = $async;
         return $this;
     }
 
@@ -89,16 +97,16 @@ class SoapClientAsync extends \SoapClient
      */
     public function getDebug()
     {
-        return self::$debug;
+        return $this->debug;
     }
 
     /**
      * @param mixed $debug
-     * @return $this
+     * @return SoapClientAsync
      */
     public function setDebug($debug)
     {
-        self::$debug = $debug;
+        $this->debug = $debug;
         return $this;
     }
 
@@ -107,61 +115,131 @@ class SoapClientAsync extends \SoapClient
      */
     public function getCurlHeaders()
     {
-        return self::$curlHeaders;
+        return $this->curlHeaders;
     }
 
     /**
      * @param array $curlHeaders
-     * @return $this;
+     * @return SoapClientAsync
      */
     public function setCurlHeaders(array $curlHeaders)
     {
-        self::$curlHeaders = $curlHeaders;
+        $this->curlHeaders = $curlHeaders;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCurlOptions()
+    {
+        return $this->curlOptions;
+    }
+
+    /**
+     * @param array $curlOptions
+     * @return SoapClientAsync
+     */
+    public function setCurlOptions(array $curlOptions)
+    {
+        $this->curlOptions = $curlOptions;
+        return $this;
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return SoapClientAsync
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLogSoapRequest()
+    {
+        return $this->logSoapRequest;
+    }
+
+    /**
+     * @param bool $logSoapRequest
+     * @return SoapClientAsync
+     */
+    public function setLogSoapRequest(bool $logSoapRequest)
+    {
+        $this->logSoapRequest = $logSoapRequest;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLogPrettyXml()
+    {
+        return $this->logPrettyXml;
+    }
+
+    /**
+     * @param bool $logPrettyXml
+     * @return SoapClientAsync
+     */
+    public function setLogPrettyXml(bool $logPrettyXml)
+    {
+        $this->logPrettyXml = $logPrettyXml;
+        return $this;
+    }
+
+
+    public function __construct($wsdl, array $options = null)
+    {
+        parent::__construct($wsdl, $options);
+        $this->logger = new NullLogger();
     }
 
     /**
      * Soap __doRequest() Method with CURL Implementation
      *
-     * @param string $request
-     * @param string $location
-     * @param string $action
-     * @param int $version
-     * @param int $one_way
+     * @param string $request The XML SOAP request
+     * @param string $location The URL to request
+     * @param string $action The SOAP action
+     * @param int $version The SOAP version
+     * @param int $one_way If one_way is set to 1, this method returns nothing. Use this where a response is not expected
      *
      * @return string
-     * @throws SoapFault
+     * @throws \SoapFault
      */
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
-        $action = static::$action;
-        $actionCommand = static::$action;
-        $actionMethod = $action;
+        $shouldGetResponse = ($this->soapMethod == static::GET_RESULT);
 
         // print xml for debugging testing
-        if ($actionCommand != static::GET_RESULT && self::$printSoapRequest) {
+        if ($this->logSoapRequest) {
             // debug the request here
-            echo($this->prettyXml($request));
-            if (self::$exitAfterPrint) {
-                exit;
+            if ($this->isLogPrettyXml()) {
+                $this->logger->debug($this->prettyXml($request));
+            } else {
+                $this->logger->debug($request);
             }
-            self::$printSoapRequest = false;
-            self::$exitAfterPrint = false;
         }
         // some .NET Servers only accept action method with ns url!! uncomment it if you get error wrong command
-        // $actionMethod  = str_ireplace(['http://tempuri.org/IFlightAPI/', 'https://tempuri.org/IFlightAPI/'], '', $action);
         /** return the xml response as its coming from normal soap call */
-        if ($actionCommand == static::GET_RESULT && static::$xmlResponse) {
-            return static::$xmlResponse;
-        } else {
-        }
-        /** return the xml response as its coming from normal soap call */
-        if ($action == static::GET_RESULT && static::$xmlResponse) {
-            return static::$xmlResponse;
+        if ($shouldGetResponse && $this->xmlResponse) {
+            return $this->xmlResponse;
         }
 
-        $soapResponses = &static::$soapResponses;
-        $soapRequests = &static::$soapRequests;
+        $soapResponses = &$this->soapResponses;
+        $soapRequests = &$this->soapRequests;
 
         /** @var $id string represent hashId of each request based on the request body to avoid multiple calls for the same request if exists */
         $id = sha1($location . $request);
@@ -180,7 +258,7 @@ class SoapClientAsync extends \SoapClient
         if (isset($soapResponses[$id])) {
             $data = $soapResponses[$id];
             unset($soapResponses[$id]);
-            if ($data instanceof SoapFault) {
+            if ($data instanceof \SoapFault) {
                 throw $data;
             }
 
@@ -188,54 +266,111 @@ class SoapClientAsync extends \SoapClient
         }
 
         /** @var $headers array of headers to be sent with request */
-        $headers = static::$curlHeaders;
+        $headers = $this->curlHeaders;
         if (empty($headers)) {
             $headers = [
                 'Content-type: text/xml',
                 'charset=utf-8',
                 "Accept: text/xml",
-                'SOAPAction: "' . $action . '"',
+                // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
                 "Content-length: " . strlen($request),
             ];
         }
 
         // ssl connection sharing
-        if (empty(static::$sharedCurlData[$location])) {
+        if (empty($this->sharedCurlData[$location])) {
             $shOpt = curl_share_init();
             curl_share_setopt($shOpt, CURLSHOPT_SHARE, CURL_LOCK_DATA_SSL_SESSION);
             curl_share_setopt($shOpt, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
             curl_share_setopt($shOpt, CURLSHOPT_SHARE, CURL_LOCK_DATA_COOKIE);
-            static::$sharedCurlData[$location] = $shOpt;
+            $this->sharedCurlData[$location] = $shOpt;
         }
 
-        $sh = static::$sharedCurlData[$location];
+        $sh = $this->sharedCurlData[$location];
 
         $ch = curl_init();
         /** CURL_OPTIONS  */
         curl_setopt($ch, CURLOPT_URL, $location);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_ENCODING, "");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 50);
-        curl_setopt($ch, CURLOPT_TIMECONDITION, 50);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_VERBOSE, static::$debug);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
         curl_setopt($ch, CURLOPT_SHARE, $sh);
+
+        // assign curl options
+        foreach ($this->curlOptions as $key => $value) {
+            curl_setopt($ch, $key, $value);
+        }
 
         $soapRequests[$id] = $ch;
 
-
-        static::$requestIds[$id] = $id;
-        static::$actions[$id] = $actionMethod;
-        static::$requestXml[$id] = $request;
-        static::$lastRequestId = $id;
+        $this->requestIds[$id] = $id;
+        $this->soapMethodArr[$id] = $this->soapMethod;
+        $this->requestXmlArr[$id] = $request;
+        $this->lastRequestId = $id;
 
         return "";
+    }
+
+    /**
+     * Call Sync method, act like normal soap method with extra implementation if needed
+     * @param string $method
+     * @param string $args
+     * @throws \SoapFault
+     * @throws \Exception
+     * @return string|mixed||stdClass
+     */
+    public function callSync($method, $args)
+    {
+        try {
+            parent::__call($method, $args);
+            /** parse the xml response or throw an exception */
+            $this->xmlResponse = $this->run([$this->lastRequestId]);
+            $result = $this->getResponseResult($method, $args);
+        } catch (\SoapFault $ex) {
+            $ex->__last_request = null;
+            if (isset($this->requestXmlArr[$this->lastRequestId])) {
+                $ex->__last_request = $this->requestXmlArr[$this->lastRequestId];
+                $ex->__last_request_gmt_date = gmdate('U');
+            }
+            throw $ex;
+        } catch (\Exception $e) {
+            $e->__last_request = $this->requestXmlArr[$this->lastRequestId];
+            $e->__last_request_gmt_date = gmdate('U');
+            throw $e;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Call Async method, suppress exception and convert to string
+     * @param string $method
+     * @param string $args
+     * @return string|mixed||stdClass
+     */
+    public function callAsync($method, $args)
+    {
+        /** generate curl session and add the soap requests to execute it later  */
+        try {
+            parent::__call($method, $args);
+            /**
+             * Return the Request ID to the calling method
+             * This next 2 lines should be custom implementation based on your solution.
+             *
+             * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
+             * to be able to get the response with it
+             * @note check the example file to understand what to write here
+             */
+            $result = $this->lastRequestId;
+        } catch (\Exception $ex) {
+            /** catch any SoapFault [is not a valid method for this service] and return null */
+            $result = self::ERROR_STR . ':' . $method . ' - ' . $ex->getCode() . ' - ' . $ex->getMessage() . ' - ' . rand();
+        }
+
+        return $result;
     }
 
     /**
@@ -244,74 +379,38 @@ class SoapClientAsync extends \SoapClient
      * @param string $method
      * @param string $args
      *
-     * @return mixed|stdClass
-     * @throws Exception
-     * @throws SoapFault
-     * @throws Exception
+     * @return string|mixed||stdClass
+     * @throws \Exception
+     * @throws \SoapFault
      */
     public function __call($method, $args)
     {
         /** set current action to the current method call */
-        static::$action = $method;
+        $this->soapMethod = $method;
 
-        if (!static::$async) {
-            try {
-                parent::__call($method, $args);
-                /** parse the xml response or throw an exception */
-                static::$xmlResponse = $this->run([static::$lastRequestId]);
-                $result = $this->getResponseResult($method, $args);
-            } catch (\SoapFault $ex) {
-                $ex->__last_request = null;
-                if (isset(self::$requestXml[static::$lastRequestId])) {
-                    $ex->__last_request = self::$requestXml[static::$lastRequestId];
-                    $ex->__last_request_gmt_date = gmdate('U');
-                }
-                throw $ex;
-            } catch (\Exception $e) {
-                $e->__last_request = self::$requestXml[static::$lastRequestId];
-                $e->__last_request_gmt_date = gmdate('U');
-                throw $e;
-            }
+        if (!$this->async) {
+            return $this->callSync($method, $args);
         } else {
-            /** generate curl session and add the soap requests to execute it later  */
-            try {
-                parent::__call($method, $args);
-                /**
-                 * Return the Request ID to the calling method
-                 * This next 2 lines should be custom implementation based on your solution.
-                 *
-                 * @var $result string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
-                 * to be able to get the response with it
-                 * @note check the example file to understand what to write here
-                 */
-                //$result = new \stdClass();
-                //$result->{$method . 'Response'} = static::$lastRequestId;
-                $result = static::$lastRequestId;
-            } catch (\SoapFault $ex) {
-                /** catch any SoapFault [is not a valid method for this service] and return null */
-                $result = self::ERROR_STR . ':' . $method . ' - ' . $ex->getCode() . ' - ' . $ex->getMessage() . ' - ' . rand();
-            }
+            return $this->callAsync($method, $args);
         }
-
-        return $result;
     }
 
     /**
-     * Execute all or some items from static::$soapRequests
+     * Execute all or some items from $this->soapRequests
      *
      * @param mixed $requestIds
      * @param bool $partial
      */
     public function doRequests($requestIds = [], $partial = false)
     {
-        $allSoapRequests = &static::$soapRequests;
-        $soapResponses = &static::$soapResponses;
+        $allSoapRequests = &$this->soapRequests;
+        $soapResponses = &$this->soapResponses;
 
         /** Determine if its partial call to execute some requests or execute all the request in $soapRequests array otherwise */
         if ($partial) {
             $soapRequests = array_intersect_key($allSoapRequests, array_flip($requestIds));
         } else {
-            $soapRequests = &static::$soapRequests;
+            $soapRequests = &$this->soapRequests;
         }
 
         /** return the response from __doRequest() if curl is not enabled */
@@ -350,7 +449,7 @@ class SoapClientAsync extends \SoapClient
                 $soapResponses[$id] = curl_multi_getcontent($ch);
                 $soapInfo = curl_getinfo($ch);
                 if ($soapInfo) {
-                    self::$soapInfo[$id] = (object)$soapInfo;
+                    $this->soapInfo[$id] = (object)$soapInfo;
                 }
 
                 // Source: http://stackoverflow.com/questions/14319696/soap-issue-soapfault-exception-client-looks-like-we-got-no-xml-document
@@ -391,19 +490,19 @@ class SoapClientAsync extends \SoapClient
         if (is_array($requestIds) && count($requestIds)) {
             $partial = true;
         }
-        $allSoapResponses = &static::$soapResponses;
+        $allSoapResponses = &$this->soapResponses;
 
         /** perform all the request */
         $this->doRequests($requestIds, $partial);
 
         /** reset the class to synchronous mode */
-        static::$async = false;
+        $this->async = false;
 
         /** parse return response of the performed requests  */
         if ($partial) {
             $soapResponses = array_intersect_key($allSoapResponses, array_flip($requestIds));
         } else {
-            $soapResponses = &static::$soapResponses;
+            $soapResponses = &$this->soapResponses;
         }
         /** if its one request return the first element in the array */
         if ($partial && count($requestIds) == 1) {
@@ -426,14 +525,15 @@ class SoapClientAsync extends \SoapClient
     public function getMultiResponses($responses = [])
     {
         $result = [];
-        static::$action = static::GET_RESULT;
+        $this->soapMethod = static::GET_RESULT;
+
         foreach ($responses as $id => $ch) {
             try {
-                static::$xmlResponse = $ch;
-                if ($ch instanceof SoapFault) {
+                $this->xmlResponse = $ch;
+                if ($ch instanceof \SoapFault) {
                     throw $ch;
                 }
-                $resultObj = parent::__call(static::$actions[$id], []);
+                $resultObj = parent::__call($this->soapMethodArr[$id], []);
                 /**
                  * Return the Request ID to the calling method
                  * This next lines should be custom implementation based on your solution.
@@ -442,17 +542,16 @@ class SoapClientAsync extends \SoapClient
                  * to be able to get the response with it
                  * @note check the example file to understand what to write here
                  */
-                //$result[$id] = $resultObj->{static::$actions[$id] . 'Return'};
                 $result[$id] = $resultObj;
                 $this->addDebugInfo($resultObj, $id);
             } catch (\SoapFault $ex) {
-                $this->addDebugInfo($ex, static::$lastRequestId);
+                $this->addDebugInfo($ex, $this->lastRequestId);
                 $result[$id] = $ex;
             }
-            unset(static::$soapResponses[$id]);
+            unset($this->soapResponses[$id]);
         }
-        static::$xmlResponse = '';
-        static::$action = '';
+        $this->xmlResponse = '';
+        $this->soapMethod = '';
 
         return $result;
     }
@@ -461,24 +560,29 @@ class SoapClientAsync extends \SoapClient
      * Parse Response of Soap Requests with parent::__doRequest()
      *
      * @param string $method
-     * @param array $args
+     * @param string|array $args
      *
-     * @throws \SoapFault $ex
+     * @throws \SoapFault
+     * @throws \Exception
      * @return string $result
      */
     public function getResponseResult($method, $args)
     {
-        static::$action = static::GET_RESULT;
+        $this->soapMethod = static::GET_RESULT;
+
         try {
             $resultObj = parent::__call($method, $args);
 
-            $id = static::$lastRequestId;
+            $id = $this->lastRequestId;
             $this->addDebugInfo($resultObj, $id);
         } catch (\SoapFault $ex) {
-            $this->addDebugInfo($ex, static::$lastRequestId);
+            $this->addDebugInfo($ex, $this->lastRequestId);
+            throw $ex;
+        } catch (\Exception $ex) {
+            $this->addDebugInfo($ex, $this->lastRequestId);
             throw $ex;
         }
-        static::$action = '';
+        $this->soapMethod = '';
 
         return $resultObj;
     }
@@ -493,17 +597,18 @@ class SoapClientAsync extends \SoapClient
      * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
      *
      */
-    protected function addDebugInfo($resultObj, $id)
+    public function addDebugInfo($resultObj, $id)
     {
+        return;
         if (!is_object($resultObj)) {
             $resultObj = new \stdClass();
         }
-        if (!empty(self::$soapInfo[$id])) {
-            $resultObj->__curl_info = self::$soapInfo[$id];
+        if (!empty($this->soapInfo[$id])) {
+            $resultObj->__curl_info = $this->soapInfo[$id];
         }
 
         if (!empty($this->__last_request)) {
-            $resultObj->__last_request = self::$requestXml[$id];
+            $resultObj->__last_request = $this->requestXmlArr[$id];
             $resultObj->__last_request_gmt_date = gmdate('U');
         }
         if (!empty($this->__last_response)) {
@@ -512,21 +617,6 @@ class SoapClientAsync extends \SoapClient
             $resultObj->__last_response_object = $xmlObject;
             $resultObj->__last_response = $this->__last_response;
         }
-    }
-
-    /**
-     * Set $printSoapRequest
-     *
-     * @param bool|false $bool
-     * @param bool|false $exit
-     *
-     * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
-     *
-     */
-    public function setPrintXmlRequest($bool = false, $exit = false)
-    {
-        static::$printSoapRequest = $bool;
-        static::$exitAfterPrint = $exit;
     }
 
     /**
