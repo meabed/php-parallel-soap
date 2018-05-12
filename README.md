@@ -1,8 +1,8 @@
 <p align="center">
   <h3 align="center">Asynchronous, Parallel, Multi-Curl PHP SoapClient </h3>
   <p align="center">
-    <a href="https://travis-ci.org/meabed/asynchronous-soap">
-      <img src="https://img.shields.io/travis/meabed/asynchronous-soap.svg?branch=master&style=flat-square" alt="Build Status">
+    <a href="https://travis-ci.org/Meabed/asynchronous-soap">
+      <img src="https://img.shields.io/travis/Meabed/asynchronous-soap.svg?branch=master&style=flat-square" alt="Build Status">
     </a>
     <a href="LICENSE.md">
       <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License">
