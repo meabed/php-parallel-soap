@@ -4,7 +4,7 @@
  */
 
 /** the main soap class */
-require_once(__DIR__ . '/../src/SoapClient.php');
+require_once(__DIR__ . '/../src/SoapClientAsync.php');
 
 /** @var string $wsdl , This is the test server i have generated to test the class */
 $wsdl = "https://whispering-meadow-99755.herokuapp.com/wsdl.php";
@@ -14,8 +14,8 @@ $options = [
     'trace' => true,
 ];
 
-/** @var SoapClientAsync $client New Soap client instance */
-$client = new SoapClientAsync($wsdl, $options);
+/** @var \Soap\SoapClientAsync $client New Soap client instance */
+$client = new \Soap\SoapClientAsync($wsdl, $options);
 
 /**
  * You can set debug mode to true to see curl verbose response if you run the script from command line

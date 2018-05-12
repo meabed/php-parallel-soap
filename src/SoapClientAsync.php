@@ -1,5 +1,6 @@
 <?php
 
+namespace Soap;
 /**
  * Asynchronous/Synchronous Soap Class
  *
@@ -9,7 +10,7 @@
  * @link   https://github.com/Meabed/asynchronous-soap
  * @note   Check the Example files and read the documentation carefully
  */
-class SoapClientAsync extends SoapClient
+class SoapClientAsync extends \SoapClient
 {
     /**  array of all responses in the client */
     public static $soapResponses = [];

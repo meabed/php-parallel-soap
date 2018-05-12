@@ -3,10 +3,11 @@
 namespace Tests\Base;
 
 use PHPUnit\Framework\TestCase;
+use Soap\SoapClientAsync;
 
 class BaseCase extends TestCase
 {
-    /** @var \SoapClientAsync  */
+    /** @var \Soap\SoapClientAsync */
     public $asyncSoapClient;
 
     public function __construct(?string $name = null, array $data = [], string $dataName = '')
@@ -21,7 +22,7 @@ class BaseCase extends TestCase
             'trace' => true,
         ];
 
-        /** @var \SoapClientAsync $client New Soap client instance */
-        $this->asyncSoapClient = new \SoapClientAsync($wsdl, $options);
+        /** @var \Soap\SoapClientAsync $client New Soap client instance */
+        $this->asyncSoapClient = new SoapClientAsync($wsdl, $options);
     }
 }
