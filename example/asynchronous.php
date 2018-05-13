@@ -33,7 +33,7 @@ $options = [
     'trace' => true,
     'exceptions' => true,
     'soap_version' => SOAP_1_1,
-    'cache_wsdl' => WSDL_CACHE_MEMORY,
+    'cache_wsdl' => WSDL_CACHE_BOTH,
     'encoding' => 'UTF-8',
     'resFn' => $parseResultFn,
 ];

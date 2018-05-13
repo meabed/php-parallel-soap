@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Soap;
+namespace Tests\Example;
 
-use Tests\Base\BaseCase;
+use Tests\Base\BaseExampleCase;
 
-class SyncTest extends BaseCase
+class SyncTest extends BaseExampleCase
 {
     public function testLogin()
     {

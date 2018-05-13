@@ -10,7 +10,6 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "type": "library",
-  "version": "1.0.3",
   "description": "Multi curl SoapClient that allow to perform multiple requests to SoapServer",
   "homepage": "https://github.com/Meabed/php-async-soap",
   "keywords": [
@@ -26,6 +25,7 @@
     "psr/log": "~1.0"
   },
   "require-dev": {
+    "jc21/clitable": "^1.1",
     "phpunit/phpunit": "~6",
     "fzaninotto/faker": "~1",
     "squizlabs/php_codesniffer": "~3",

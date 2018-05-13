@@ -67,6 +67,9 @@ class SoapClientAsync extends \SoapClient
     /** @var \Closure */
     public $resFn;
 
+    /** @var \Closure */
+    public $soapActionFn;
+
     /** @var LoggerInterface */
     public $logger;
 
@@ -234,11 +237,17 @@ class SoapClientAsync extends \SoapClient
         $this->resFn = $options['resFn'] ?? function ($method, $res) {
                 return $res;
             };
+        $this->soapActionFn = $options['soapActionFn'] ?? function ($action, $headers) {
+                $headers[] = 'SOAPAction: "' . $action . '"';
+                // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
+                return $headers;
+            };
 
         // cleanup
         unset($options['logger']);
         unset($options['debugFn']);
         unset($options['resFn']);
+        unset($options['soapActionFn']);
     }
 
     /**
@@ -301,15 +310,16 @@ class SoapClientAsync extends \SoapClient
 
         /** @var $headers array of headers to be sent with request */
         $headers = $this->curlHeaders;
-        if (empty($headers)) {
+        if (!$headers) {
             $headers = [
                 'Content-type: text/xml',
                 'charset=utf-8',
                 "Accept: text/xml",
-                // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
                 "Content-length: " . strlen($request),
             ];
         }
+        $soapActionFn = $this->soapActionFn;
+        $headers = $soapActionFn($action, $headers);
 
         // ssl connection sharing
         if (empty($this->sharedCurlData[$location])) {

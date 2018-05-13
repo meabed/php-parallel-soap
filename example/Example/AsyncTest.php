@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Soap;
+namespace Tests\Example;
 
-use Tests\Base\BaseCase;
+use Tests\Base\BaseExampleCase;
 
-class AsyncTest extends BaseCase
+class AsyncTest extends BaseExampleCase
 {
     public function testAsync1()
     {

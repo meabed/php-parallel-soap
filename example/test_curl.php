@@ -1,18 +1,17 @@
 <?php
-//require_once __DIR__ . '/../vendor/autoload.php';
-//
-//function post_curl($url, $post_data)
-//{
-//    $ch = curl_init();
-//    curl_setopt($ch, CURLOPT_URL, $url);
-//    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-//    curl_setopt($ch, CURLOPT_POST, 1);
-//    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-//    $output = curl_exec($ch);
-//    curl_close($ch);
-//    return $output;
-//}
-//
+require_once __DIR__ . '/../vendor/autoload.php';
+function post_curl($url, $post_data)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+    $output = curl_exec($ch);
+    curl_close($ch);
+    return $output;
+}
+
 //
 //if (false) {
 //    $dataCurl = '';
@@ -20,23 +19,27 @@
 //}
 //
 //
-//$data = [
-//    'param' => ['12312', 'demo'],
-//];
-//
-//$soapClient = new SoapClient('http://whispering-meadow-99755.herokuapp.com/wsdl.php', ['trace' => 1]);
-//
-//try {
-//    $rs = $soapClient->__soapCall('Login', $data);
-//    var_dump($soapClient->__getLastRequest());
-//
-//} catch (\Exception $e) {
-//    var_dump($soapClient->__getLastRequest());
-//    var_dump($soapClient->__getLastResponse());
-//    var_dump($soapClient);
-//}
-//
-//
+
+$data = [
+    'parameters' => ['Arg1' => 4, 'Arg2' => 3],
+];
+
+$soapClient = new SoapClient('http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL=1', ['trace' => 1]);
+
+try {
+    $rs = $soapClient->__soapCall('AddInteger', $data);
+    var_dump($soapClient->__getLastRequestHeaders());
+    var_dump($soapClient->__getLastRequest());
+    var_dump($soapClient->__getLastResponse());
+    var_dump($soapClient->__getLastResponseHeaders());
+
+} catch (\Exception $e) {
+    var_dump($soapClient->__getLastRequest());
+    var_dump($soapClient->__getLastResponse());
+    var_dump($soapClient);
+}
+
+
 //if (!is_object($resultObj)) {
 //    $resultObj = new \stdClass();
 //}
