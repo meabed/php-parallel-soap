@@ -15,27 +15,17 @@ class SyncTest extends BaseCrcindCase
         $this->assertEquals('7', $rs);
     }
 
-//    public function testInvalidSession()
-//    {
-//        // invalid session exception
-//        try {
-//            $this->asyncSoapClient->SayHello('demo', '123456');
-//        } catch (\Exception $e) {
-//            $this->assertEquals(\SoapFault::class, get_class($e));
-//            $this->assertContains('Invalid session', $e->getMessage());
-//        }
-//    }
-//
-//    public function testInvalidParam()
-//    {
-//        // invalid params exception
-//        try {
-//            $this->asyncSoapClient->SayHello('demo123456-loggedin', null);
-//        } catch (\Exception $e) {
-//            $this->assertEquals(\SoapFault::class, get_class($e));
-//            $this->assertContains('Invalid params', $e->getMessage());
-//        }
-//    }
+    public function testInvalidMethod()
+    {
+        // is not a valid method
+        try {
+            $this->asyncSoapClient->AddIntegerUnknown('demo', '123456');
+        } catch (\Exception $e) {
+            $this->assertEquals(\SoapFault::class, get_class($e));
+            $this->assertContains('Function ("AddIntegerUnknown") is not a valid method for this service', $e->getMessage());
+        }
+    }
+
 //
 //    public function testSayHello()
 //    {
