@@ -19,6 +19,11 @@ class AsyncTest extends BaseDneCase
         $this->assertEquals('7', $rs[$req1]);
         $this->assertEquals('3', $rs[$req2]);
         $this->assertEquals('8', $rs[$req3]);
+
+        $this->asyncSoapClient->setAsync(false);
+        $rs = $this->asyncSoapClient->Add(['intA' => 3, 'intB' => 10]);
+        $this->assertEquals('13', $rs);
+
     }
 
     // todo

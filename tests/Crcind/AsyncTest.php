@@ -19,6 +19,12 @@ class AsyncTest extends BaseCrcindCase
         $this->assertEquals('7', $rs[$req1]);
         $this->assertEquals('3', $rs[$req2]);
         $this->assertEquals('8', $rs[$req3]);
+
+        $this->asyncSoapClient->setAsync(false);
+        $rs = $this->asyncSoapClient->AddInteger(['Arg1' => 3, 'Arg2' => 10]);
+        $this->assertEquals('13', $rs);
+
+
     }
 
     // todo
