@@ -318,6 +318,8 @@ class SoapClientAsync extends \SoapClient
                 "Content-length: " . strlen($request),
             ];
         }
+
+        // pass the soap action in every request from the WSDL if required
         $soapActionFn = $this->soapActionFn;
         $headers = $soapActionFn($action, $headers);
 
@@ -534,7 +536,7 @@ class SoapClientAsync extends \SoapClient
         $this->doRequests($requestIds, $partial);
 
         /** reset the class to synchronous mode */
-        $this->async = false;
+        $this->setAsync(false);
 
         /** parse return response of the performed requests  */
         if ($partial) {
