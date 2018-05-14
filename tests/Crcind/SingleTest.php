@@ -6,8 +6,15 @@ use Tests\Base\BaseCrcindCase;
 
 class SingleTest extends BaseCrcindCase
 {
+    public function __construct($name = null, array $data = [], string $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $this->parallelSoapClient->setMulti(false);
+    }
+
     public function testAddInteger()
     {
+
         $data = [
             'Arg1' => 4, 'Arg2' => 3,
         ];

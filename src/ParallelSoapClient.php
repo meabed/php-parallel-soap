@@ -31,7 +31,7 @@ class ParallelSoapClient extends \SoapClient
     /**  string current method call  */
     public $soapMethod;
 
-    /**  array of all requests soap methods in the client */
+    /** @var []string array of all requests soap methods in the client */
     public $soapMethodArr = [];
 
     /**  array of all requestIds  */
@@ -246,17 +246,6 @@ class ParallelSoapClient extends \SoapClient
          * to avoid multiple calls for the same request if exists
          */
         $id = sha1($location . $request);
-        /** if curl is not enabled use parent::__doRequest */
-        if (!in_array('curl', get_loaded_extensions())) {
-            if (isset($soapResponses[$id])) {
-                unset($soapResponses[$id]);
-
-                return parent::__doRequest($request, $location, $action, $version, $one_way = 0);
-            }
-            $soapRequests[$id] = true;
-
-            return "";
-        }
         /** return response if soap method called for second time with same parameters */
         if (isset($soapResponses[$id])) {
             $data = $soapResponses[$id];
@@ -320,8 +309,7 @@ class ParallelSoapClient extends \SoapClient
      * Call Sync method, act like normal soap method with extra implementation if needed
      * @param string $method
      * @param string $args
-     * @throws \SoapFault
-     * @throws \Exception
+     * @throws \Exception|\SoapFault
      * @return string|mixed
      */
     public function callOne($method, $args)
@@ -331,8 +319,6 @@ class ParallelSoapClient extends \SoapClient
             /** parse the xml response or throw an exception */
             $this->xmlResponse = $this->run([$this->lastRequestId]);
             $res = $this->getResponseResult($method, $args);
-        } catch (\SoapFault $ex) {
-            throw $ex;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -408,15 +394,6 @@ class ParallelSoapClient extends \SoapClient
             $soapRequests = &$this->soapRequests;
         }
 
-        /** return the response from __doRequest() if curl is not enabled */
-        if (!in_array('curl', get_loaded_extensions())) {
-            foreach ($soapRequests as $id => $ch) {
-                $soapResponses[$id] = true;
-            }
-            $soapRequests = [];
-
-            return;
-        }
         /** Initialise curl multi handler and execute the requests  */
         $mh = curl_multi_init();
         foreach ($soapRequests as $ch) {
@@ -449,7 +426,7 @@ class ParallelSoapClient extends \SoapClient
                 if ($soapResponses[$id] === null) {
                     throw new \SoapFault("HTTP", curl_error($ch));
                 }
-            } catch (\SoapFault $e) {
+            } catch (\Exception $e) {
                 $soapResponses[$id] = $e;
             }
             curl_multi_remove_handle($mh, $ch);
@@ -520,7 +497,7 @@ class ParallelSoapClient extends \SoapClient
         foreach ($responses as $id => $ch) {
             try {
                 $this->xmlResponse = $ch;
-                if ($ch instanceof \SoapFault) {
+                if ($ch instanceof \Exception) {
                     throw $ch;
                 }
                 $res = parent::__call($this->soapMethodArr[$id], []);
@@ -535,7 +512,7 @@ class ParallelSoapClient extends \SoapClient
                 $resFn = $this->resFn;
                 $resArr[$id] = $resFn($this->soapMethodArr[$id], $res);
                 $this->addDebugData($res, $id);
-            } catch (\SoapFault $ex) {
+            } catch (\Exception $ex) {
                 $this->addDebugData($ex, $this->lastRequestId);
                 $resArr[$id] = $ex;
             }
@@ -553,8 +530,7 @@ class ParallelSoapClient extends \SoapClient
      * @param string $method
      * @param string|array $args
      *
-     * @throws \SoapFault
-     * @throws \Exception
+     * @throws \Exception|\SoapFault|
      * @return string $res
      */
     public function getResponseResult($method, $args)
@@ -566,9 +542,6 @@ class ParallelSoapClient extends \SoapClient
 
             $id = $this->lastRequestId;
             $this->addDebugData($res, $id);
-        } catch (\SoapFault $ex) {
-            $this->addDebugData($ex, $this->lastRequestId);
-            throw $ex;
         } catch (\Exception $ex) {
             $this->addDebugData($ex, $this->lastRequestId);
             throw $ex;

@@ -7,6 +7,12 @@ use Tests\Base\BaseDneCase;
 class SingleTest extends BaseDneCase
 {
 
+    public function __construct($name = null, array $data = [], string $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $this->parallelSoapClient->setMulti(false);
+    }
+
     public function testAddInteger()
     {
         $data = [

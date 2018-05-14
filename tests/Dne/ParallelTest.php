@@ -6,10 +6,14 @@ use Tests\Base\BaseDneCase;
 
 class ParallelTest extends BaseDneCase
 {
+    public function __construct($name = null, array $data = [], string $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $this->parallelSoapClient->setMulti(true);
+    }
+
     public function testAddInteger()
     {
-        $this->parallelSoapClient->setMulti(true);
-
         $req1 = $this->parallelSoapClient->Add(['intA' => 4, 'intB' => 3]);
         $req2 = $this->parallelSoapClient->Add(['intA' => 1, 'intB' => 2]);
         $req3 = $this->parallelSoapClient->Add(['intA' => 3, 'intB' => 5]);
@@ -19,10 +23,6 @@ class ParallelTest extends BaseDneCase
         $this->assertEquals('7', $rs[$req1]);
         $this->assertEquals('3', $rs[$req2]);
         $this->assertEquals('8', $rs[$req3]);
-
-        $this->parallelSoapClient->setMulti(false);
-        $rs = $this->parallelSoapClient->Add(['intA' => 3, 'intB' => 10]);
-        $this->assertEquals('13', $rs);
 
     }
 
