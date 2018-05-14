@@ -283,7 +283,7 @@ class ParallelSoapClient extends \SoapClient
             // debug the request here
             $this->logger->debug($this->formatXml($request));
         }
-        
+
         // some .NET Servers only accept action method with ns url!! uncomment it if you get error wrong command
         /** return the xml response as its coming from normal soap call */
         if ($shouldGetResponse && $this->xmlResponse) {
@@ -452,6 +452,7 @@ class ParallelSoapClient extends \SoapClient
                 } while ($mrc == CURLM_CALL_MULTI_PERFORM);
             }
         }
+
         /** assign the responses for all requests has been performed */
         foreach ($soapRequests as $id => $ch) {
             try {
