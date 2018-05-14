@@ -31,7 +31,7 @@ class ParallelSoapClient extends \SoapClient
     /**  string current method call  */
     public $soapMethod;
 
-    /** @var []string array of all requests soap methods in the client */
+    /** @var array of all requests soap methods in the client */
     public $soapMethodArr = [];
 
     /**  array of all requestIds  */
