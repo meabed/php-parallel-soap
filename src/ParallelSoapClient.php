@@ -242,7 +242,9 @@ class ParallelSoapClient extends \SoapClient
         $soapResponses = &$this->soapResponses;
         $soapRequests = &$this->soapRequests;
 
-        /** @var $id string represent hashId of each request based on the request body to avoid multiple calls for the same request if exists */
+        /** @var $id string represent hashId of each request based on the request body
+         * to avoid multiple calls for the same request if exists
+         */
         $id = sha1($location . $request);
         /** if curl is not enabled use parent::__doRequest */
         if (!in_array('curl', get_loaded_extensions())) {
@@ -320,7 +322,7 @@ class ParallelSoapClient extends \SoapClient
      * @param string $args
      * @throws \SoapFault
      * @throws \Exception
-     * @return string|mixed||stdClass
+     * @return string|mixed
      */
     public function callOne($method, $args)
     {
@@ -342,7 +344,7 @@ class ParallelSoapClient extends \SoapClient
      * Call Parallel method, suppress exception and convert to string
      * @param string $method
      * @param string $args
-     * @return string|mixed||stdClass
+     * @return string|mixed
      */
     public function callParallel($method, $args)
     {
@@ -372,7 +374,7 @@ class ParallelSoapClient extends \SoapClient
      * @param string $method
      * @param string $args
      *
-     * @return string|mixed||stdClass
+     * @return string|mixed
      * @throws \Exception
      * @throws \SoapFault
      */
@@ -424,9 +426,6 @@ class ParallelSoapClient extends \SoapClient
         $active = null;
         do {
             $mrc = curl_multi_exec($mh, $active);
-            if ($mrc > 0) {
-                //echo "ERREUR !\n " . curl_multi_strerror($mrc);
-            }
         } while ($mrc === CURLM_CALL_MULTI_PERFORM || $active);
 
         while ($active && $mrc == CURLM_OK) {
@@ -446,10 +445,7 @@ class ParallelSoapClient extends \SoapClient
                     $this->curlInfo[$id] = (object)$curlInfo;
                 }
 
-                // Source: http://stackoverflow.com/questions/14319696/soap-issue-soapfault-exception-client-looks-like-we-got-no-xml-document
-                // $xml                = explode("\r\n", $soapResponses[$id]);
-                // $soapResponses[$id] = preg_replace('/^(\x00\x00\xFE\xFF|\xFF\xFE\x00\x00|\xFE\xFF|\xFF\xFE|\xEF\xBB\xBF)/', "", $xml[0]);
-
+                // @link http://stackoverflow.com/questions/14319696/soap-issue-soapfault-exception-client-looks-like-we-got-no-xml-document
                 if ($soapResponses[$id] === null) {
                     throw new \SoapFault("HTTP", curl_error($ch));
                 }
