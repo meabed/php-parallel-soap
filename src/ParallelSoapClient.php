@@ -14,7 +14,7 @@ use Psr\Log\NullLogger;
  * @link   https://github.com/Meabed/php-parallel-soap
  * @note   Check the Example files and read the documentation carefully
  */
-class SoapClientParallel extends \SoapClient
+class ParallelSoapClient extends \SoapClient
 {
     /**  array of all responses in the client */
     public $soapResponses = [];

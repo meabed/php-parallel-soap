@@ -6,7 +6,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
  */
 
 /** the main soap class */
-require_once(__DIR__ . '/../src/SoapClientParallel.php');
+require_once(__DIR__ . '/../src/ParallelSoapClient.php');
 
 /** @var string $wsdl , This is the test server i have generated to test the class */
 $wsdl = "https://whispering-meadow-99755.herokuapp.com/wsdl.php";
@@ -151,7 +151,7 @@ foreach ($responses as $id => $response) {
          * getName => $response->getNameResponse
          * logout => $response->logoutResponse
          *
-         * @Important please check SoapClientParallel NOTES in @line 153 and @line 295 For auto implementation of the soap response pattern
+         * @Important please check ParallelSoapClient NOTES in @line 153 and @line 295 For auto implementation of the soap response pattern
          *
          */
         if (!is_string($response)) {
