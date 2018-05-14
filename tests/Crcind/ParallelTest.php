@@ -10,6 +10,12 @@ class ParallelTest extends BaseCrcindCase
     {
         parent::__construct($name, $data, $dataName);
         $this->parallelSoapClient->setMulti(true);
+        $this->parallelSoapClient->setCurlOptions(
+            [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+            ]
+        );
     }
 
     public function testAddInteger()

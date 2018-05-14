@@ -287,23 +287,12 @@ class ParallelSoapClient extends \SoapClient
             return $this->xmlResponse;
         }
 
-        $soapResponses = &$this->soapResponses;
         $soapRequests = &$this->soapRequests;
 
         /** @var $id string represent hashId of each request based on the request body
          * to avoid multiple calls for the same request if exists
          */
         $id = sha1($location . $request);
-        /** return response if soap method called for second time with same parameters */
-        if (isset($soapResponses[$id])) {
-            $data = $soapResponses[$id];
-            unset($soapResponses[$id]);
-            if ($data instanceof \Exception) {
-                throw $data;
-            }
-
-            return $data;
-        }
 
         /** @var $headers array of headers to be sent with request */
         $defaultHeaders = [
