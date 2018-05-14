@@ -29,6 +29,16 @@ class BaseCrcindCase extends TestCase
             return $res;
         };
 
+        $formatXmlFn = function ($request) {
+            $dom = new \DOMDocument();
+            $dom->preserveWhiteSpace = false;
+            $dom->loadXML($request);
+            $dom->formatOutput = true;
+
+            return $dom->saveXml();
+        };
+
+
         // @link http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
         /** @var string $wsdl , This is the test server i have generated to test the class */
         $wsdl = "http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL";
@@ -42,9 +52,11 @@ class BaseCrcindCase extends TestCase
             'encoding' => 'UTF-8',
             'resFn' => $parseResultFn,
             'soapActionFn' => $soapActionFn,
+            'formatXmlFn' => $formatXmlFn,
         ];
 
         /** @var \Soap\ParallelSoapClient $client New Soap client instance */
         $this->parallelSoapClient = new ParallelSoapClient($wsdl, $options);
+        $this->parallelSoapClient->setLogSoapRequest(1);
     }
 }

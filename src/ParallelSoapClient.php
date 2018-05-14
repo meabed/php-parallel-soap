@@ -46,9 +46,6 @@ class ParallelSoapClient extends \SoapClient
     /** @var bool log soap request */
     public $logSoapRequest = false;
 
-    /** @var bool log pretty xml */
-    public $logPrettyXml = false;
-
     /** @var array of all curl_info in the client */
     public $curlInfo = [];
 
@@ -57,6 +54,9 @@ class ParallelSoapClient extends \SoapClient
 
     /** @var \Closure */
     protected $debugFn;
+
+    /** @var \Closure */
+    protected $formatXmlFn;
 
     /** @var \Closure */
     protected $resFn;
@@ -148,24 +148,6 @@ class ParallelSoapClient extends \SoapClient
     }
 
     /**
-     * @return bool
-     */
-    public function isLogPrettyXml()
-    {
-        return $this->logPrettyXml;
-    }
-
-    /**
-     * @param bool $logPrettyXml
-     * @return ParallelSoapClient
-     */
-    public function setLogPrettyXml(bool $logPrettyXml)
-    {
-        $this->logPrettyXml = $logPrettyXml;
-        return $this;
-    }
-
-    /**
      * @return \Closure
      */
     public function getDebugFn()
@@ -180,6 +162,24 @@ class ParallelSoapClient extends \SoapClient
     public function setDebugFn(\Closure $debugFn)
     {
         $this->debugFn = $debugFn;
+        return $this;
+    }
+
+    /**
+     * @return \Closure
+     */
+    public function getFormatXmlFn()
+    {
+        return $this->formatXmlFn;
+    }
+
+    /**
+     * @param \Closure $formatXmlFn
+     * @return ParallelSoapClient
+     */
+    public function setFormatXmlFn(\Closure $formatXmlFn)
+    {
+        $this->formatXmlFn = $formatXmlFn;
         return $this;
     }
 
@@ -222,8 +222,6 @@ class ParallelSoapClient extends \SoapClient
 
     public function __construct($wsdl, array $options = null)
     {
-        parent::__construct($wsdl, $options);
-
         // logger
         $logger = $options['logger'] ?? new NullLogger();
         $this->setLogger($logger);
@@ -233,13 +231,21 @@ class ParallelSoapClient extends \SoapClient
             };
         $this->setDebugFn($debugFn);
 
+        // format xml before logging
+        $formatXmlFn = $options['formatXmlFn'] ?? function ($xml) {
+                return $xml;
+            };
+        $this->setFormatXmlFn($formatXmlFn);
+
         // result parsing function
         $resFn = $options['resFn'] ?? function ($method, $res) {
                 return $res;
             };
         $this->setResFn($resFn);
 
-        // soapaction function to set in the header
+        // soapAction function to set in the header
+        // Ex: SOAPAction: "http://tempuri.org/SOAP.Demo.AddInteger"
+        // Ex: SOAPAction: "http://webservices.amadeus.com/PNRRET_11_3_1A"
         $soapActionFn = $options['soapActionFn'] ?? function ($action, $headers) {
                 $headers[] = 'SOAPAction: "' . $action . '"';
                 // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
@@ -252,6 +258,8 @@ class ParallelSoapClient extends \SoapClient
         unset($options['debugFn']);
         unset($options['resFn']);
         unset($options['soapActionFn']);
+
+        parent::__construct($wsdl, $options);
     }
 
     /**
@@ -273,12 +281,9 @@ class ParallelSoapClient extends \SoapClient
         // print xml for debugging testing
         if ($this->logSoapRequest) {
             // debug the request here
-            if ($this->isLogPrettyXml()) {
-                $this->logger->debug($this->prettyXml($request));
-            } else {
-                $this->logger->debug($request);
-            }
+            $this->logger->debug($this->formatXml($request));
         }
+        
         // some .NET Servers only accept action method with ns url!! uncomment it if you get error wrong command
         /** return the xml response as its coming from normal soap call */
         if ($shouldGetResponse && $this->xmlResponse) {
@@ -595,31 +600,24 @@ class ParallelSoapClient extends \SoapClient
      * @param $id
      *
      * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
-     *
+     * @return mixed
      */
     public function addDebugData($res, $id)
     {
         $fn = $this->debugFn;
-        $fn($res, $id);
+        return $fn($res, $id);
     }
 
     /**
-     * Print pretty xml
+     * format xml
      *
      * @param $request
-     *
-     * @return string
-     *
      * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
-     *
+     * @return mixed
      */
-    public function prettyXml($request)
+    public function formatXml($request)
     {
-        $dom = new \DOMDocument();
-        $dom->preserveWhiteSpace = false;
-        $dom->loadXML($request);
-        $dom->formatOutput = true;
-
-        return $dom->saveXml();
+        $fn = $this->formatXmlFn;
+        return $fn($request);
     }
 }
