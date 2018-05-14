@@ -16,31 +16,31 @@ use Psr\Log\NullLogger;
  */
 class ParallelSoapClient extends \SoapClient
 {
-    /**  array of all responses in the client */
+    /** @var array of all responses in the client */
     public $soapResponses = [];
 
-    /**  array of all requests in the client */
+    /** @var array of all requests in the client */
     public $soapRequests = [];
 
-    /**  array of all requests xml in the client */
+    /** @var array of all requests xml in the client */
     public $requestXmlArr = [];
 
-    /**  string the xml returned from soap call */
+    /** @var string the xml returned from soap call */
     public $xmlResponse;
 
-    /**  string current method call  */
+    /** @var string current method call */
     public $soapMethod;
 
     /** @var array of all requests soap methods in the client */
     public $soapMethodArr = [];
 
-    /**  array of all requestIds  */
+    /** @var array of all requestIds */
     public $requestIds;
 
-    /**  string last request id  */
+    /** @var string last request id */
     public $lastRequestId;
 
-    /**  bool soap parallel flag  */
+    /** @var bool soap parallel flag */
     public $multi = false;
 
     /** @var bool log soap request */
@@ -49,7 +49,7 @@ class ParallelSoapClient extends \SoapClient
     /** @var bool log pretty xml */
     public $logPrettyXml = false;
 
-    /**  array of all curl_info in the client */
+    /** @var array of all curl_info in the client */
     public $curlInfo = [];
 
     /** @var array curl options */
@@ -67,15 +67,13 @@ class ParallelSoapClient extends \SoapClient
     /** @var LoggerInterface */
     public $logger;
 
-    /**
-     * @var array
-     */
+    /** @var array curl share ssl */
     public $sharedCurlData = [];
 
-    /**  getRequestResponse action constant used for parsing the xml with from parent::__doRequest */
+    /** @var string getRequestResponse action constant used for parsing the xml with from parent::__doRequest */
     const GET_RESPONSE_CONST = 'getRequestResponseMethod';
+    /** @var string text prefix, if error happen due to SOAP error before its executed ex:invalid method */
     const ERROR_STR = '*ERROR*';
-
 
     /**
      * @return mixed
@@ -385,7 +383,7 @@ class ParallelSoapClient extends \SoapClient
             $res = $this->lastRequestId;
         } catch (\Exception $ex) {
             /** catch any SoapFault [is not a valid method for this service] and return null */
-            $res = self::ERROR_STR . ':' . $method . ' - ' . $ex->getCode() . ' - ' . $ex->getMessage() . ' - rand::' . rand();
+            $res = static::ERROR_STR . ':' . $method . ' - ' . $ex->getCode() . ' - ' . $ex->getMessage() . ' - rand::' . rand();
         }
 
         return $res;
