@@ -48,7 +48,6 @@ class SingleTest extends BaseDneCase
     // test headers soap action
     // test curl info / debug data
     // test parser function
-    // test logger
     // test pretty xml
     // test log shipping
     // test custom headers

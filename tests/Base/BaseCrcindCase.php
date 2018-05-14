@@ -58,5 +58,6 @@ class BaseCrcindCase extends TestCase
         /** @var \Soap\ParallelSoapClient $client New Soap client instance */
         $this->parallelSoapClient = new ParallelSoapClient($wsdl, $options);
         $this->parallelSoapClient->setLogSoapRequest(1);
+        $this->parallelSoapClient->setLogger(new StdoutLogger());
     }
 }

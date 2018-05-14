@@ -18,7 +18,6 @@ class ParallelTest extends BaseCrcindCase
             ]
         );
 
-        $this->parallelSoapClient->setLogger(new StdoutLogger());
     }
 
     public function testAddInteger()
@@ -85,7 +84,6 @@ class ParallelTest extends BaseCrcindCase
     // test headers soap action
     // test curl info / debug data
     // test parser function
-    // test logger
     // test pretty xml
     // test log shipping
     // test custom headers
