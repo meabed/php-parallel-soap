@@ -2,6 +2,7 @@
 
 namespace Tests\Crcind;
 
+use Tests\Base\StdoutLogger;
 use Tests\Base\BaseCrcindCase;
 
 class ParallelTest extends BaseCrcindCase
@@ -16,6 +17,8 @@ class ParallelTest extends BaseCrcindCase
                 CURLOPT_SSL_VERIFYPEER => false,
             ]
         );
+
+        $this->parallelSoapClient->setLogger(new StdoutLogger());
     }
 
     public function testAddInteger()

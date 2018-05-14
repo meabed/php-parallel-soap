@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
+// example soap action
+// @link https://github.com/amabnl/amadeus-ws-client/blob/master/tests/Amadeus/Client/Session/Handler/testfiles/testwsdl.wsdl#L48
+// @link http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
+
 /**
  * The test soap Server is Located @ https://whispering-meadow-99755.herokuapp.com/wsdl.php
  */

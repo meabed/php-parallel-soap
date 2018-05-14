@@ -2,6 +2,8 @@
 
 namespace Soap;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -14,8 +16,9 @@ use Psr\Log\NullLogger;
  * @link   https://github.com/Meabed/php-parallel-soap
  * @note   Check the Example files and read the documentation carefully
  */
-class ParallelSoapClient extends \SoapClient
+class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
     /** @var array of all responses in the client */
     public $soapResponses = [];
 
@@ -64,9 +67,6 @@ class ParallelSoapClient extends \SoapClient
     /** @var \Closure */
     protected $soapActionFn;
 
-    /** @var LoggerInterface */
-    public $logger;
-
     /** @var array curl share ssl */
     public $sharedCurlData = [];
 
@@ -108,24 +108,6 @@ class ParallelSoapClient extends \SoapClient
     public function setCurlOptions(array $curlOptions)
     {
         $this->curlOptions = $curlOptions;
-        return $this;
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     * @return ParallelSoapClient
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
         return $this;
     }
 
