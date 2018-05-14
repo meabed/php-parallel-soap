@@ -15,13 +15,6 @@ class BaseDneCase extends TestCase
         parent::__construct($name, $data, $dataName);
 
         // parse response function
-        $soapActionFn = function ($action, $headers) {
-            $headers[] = 'SOAPAction: "' . $action . '"';
-            // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
-            return $headers;
-        };
-
-        // parse response function
         $parseResultFn = function ($method, $res) {
             if (isset($res->{$method . 'Result'})) {
                 return $res->{$method . 'Result'};
@@ -40,7 +33,6 @@ class BaseDneCase extends TestCase
             'cache_wsdl' => WSDL_CACHE_BOTH,
             'encoding' => 'UTF-8',
             'resFn' => $parseResultFn,
-            'soapActionFn' => $soapActionFn,
         ];
 
         /** @var \Soap\ParallelSoapClient $client New Soap client instance */
