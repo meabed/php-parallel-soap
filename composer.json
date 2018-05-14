@@ -1,5 +1,5 @@
 {
-  "name": "meabed/php-async-soap",
+  "name": "meabed/php-parallel-soap",
   "license": "MIT",
   "authors": [
     {
@@ -11,7 +11,7 @@
   "prefer-stable": true,
   "type": "library",
   "description": "Multi curl SoapClient that allow to perform multiple requests to SoapServer",
-  "homepage": "https://github.com/Meabed/php-async-soap",
+  "homepage": "https://github.com/Meabed/php-parallel-soap",
   "keywords": [
     "Soap",
     "Curl",

@@ -6,7 +6,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
  */
 
 /** the main soap class */
-require_once(__DIR__ . '/../src/SoapClientAsync.php');
+require_once(__DIR__ . '/../src/SoapClientParallel.php');
 
 /** @var string $wsdl , This is the test server i have generated to test the class */
 $wsdl = "https://whispering-meadow-99755.herokuapp.com/wsdl.php";
@@ -38,15 +38,15 @@ $options = [
     'resFn' => $parseResultFn,
 ];
 
-/** @var \Soap\SoapClientAsync $client New Soap client instance */
-$client = new \Soap\SoapClientAsync($wsdl, $options);
+/** @var \Soap\ParallelSoapClient $client New Soap client instance */
+$client = new \Soap\ParallelSoapClient($wsdl, $options);
 
 /**
  * You can set debug mode to true to see curl verbose response if you run the script from command line
  *
  * @default false
  */
-$client->setDebug(false);
+// $client->setDebug(false);
 
 /** @var string $session , SessionId required in SoapOperations */
 $session = null;
@@ -70,7 +70,7 @@ catch (Exception $e) {
  * @default is false AND it get reset back to FALSE after each $client->run();
  *
  */
-$client->setAsync(true);
+$client->setMulti(true);
 
 /** @var array $requestIds */
 $requestIds = [];
@@ -151,7 +151,7 @@ foreach ($responses as $id => $response) {
          * getName => $response->getNameResponse
          * logout => $response->logoutResponse
          *
-         * @Important please check SoapClientAsync NOTES in @line 153 and @line 295 For auto implementation of the soap response pattern
+         * @Important please check SoapClientParallel NOTES in @line 153 and @line 295 For auto implementation of the soap response pattern
          *
          */
         if (!is_string($response)) {

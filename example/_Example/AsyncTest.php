@@ -8,7 +8,7 @@ class AsyncTest extends BaseExampleCase
 {
     public function testAsync1()
     {
-        $this->asyncSoapClient->setAsync(true);
+        $this->asyncSoapClient->setMulti(true);
 
         $req1 = $this->asyncSoapClient->Login(['demo', '123456']); // valid
         $req2 = $this->asyncSoapClient->SayHello('demo1', 'NAME0123456'); // invalid session

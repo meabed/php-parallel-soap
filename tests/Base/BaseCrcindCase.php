@@ -3,12 +3,12 @@
 namespace Tests\Base;
 
 use PHPUnit\Framework\TestCase;
-use Soap\SoapClientAsync;
+use Soap\ParallelSoapClient;
 
 class BaseCrcindCase extends TestCase
 {
-    /** @var \Soap\SoapClientAsync */
-    public $asyncSoapClient;
+    /** @var \Soap\ParallelSoapClient */
+    public $parallelSoapClient;
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -29,6 +29,7 @@ class BaseCrcindCase extends TestCase
             return $res;
         };
 
+        // @link http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
         /** @var string $wsdl , This is the test server i have generated to test the class */
         $wsdl = "http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL";
         /** @var array $options , array of options for the soap client */
@@ -43,7 +44,7 @@ class BaseCrcindCase extends TestCase
             'soapActionFn' => $soapActionFn,
         ];
 
-        /** @var \Soap\SoapClientAsync $client New Soap client instance */
-        $this->asyncSoapClient = new SoapClientAsync($wsdl, $options);
+        /** @var \Soap\ParallelSoapClient $client New Soap client instance */
+        $this->parallelSoapClient = new ParallelSoapClient($wsdl, $options);
     }
 }

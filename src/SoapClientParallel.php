@@ -6,24 +6,21 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
- * Asynchronous/Synchronous Soap Class
+ * Single/Parallel Soap Class
  *
  * Implements soap with multi server-to-server calls using curl module.
  *
  * @author Mohamed Meabed <mo.meabed@gmail.com>
- * @link   https://github.com/Meabed/php-async-soap
+ * @link   https://github.com/Meabed/php-parallel-soap
  * @note   Check the Example files and read the documentation carefully
  */
-class SoapClientAsync extends \SoapClient
+class SoapClientParallel extends \SoapClient
 {
     /**  array of all responses in the client */
     public $soapResponses = [];
 
     /**  array of all requests in the client */
     public $soapRequests = [];
-
-    /**  array of all curl_info in the client */
-    public $curlInfo = [];
 
     /**  array of all requests xml in the client */
     public $requestXmlArr = [];
@@ -43,11 +40,8 @@ class SoapClientAsync extends \SoapClient
     /**  string last request id  */
     public $lastRequestId;
 
-    /**  bool soap asynchronous flag  */
-    public $async = false;
-
-    /**  bool soap verbose flag  */
-    public $debug = false;
+    /**  bool soap parallel flag  */
+    public $multi = false;
 
     /** @var bool log soap request */
     public $logSoapRequest = false;
@@ -55,8 +49,8 @@ class SoapClientAsync extends \SoapClient
     /** @var bool log pretty xml */
     public $logPrettyXml = false;
 
-    /** @var array curl header options */
-    public $curlHeaders = [];
+    /**  array of all curl_info in the client */
+    public $curlInfo = [];
 
     /** @var array curl options */
     public $curlOptions = [];
@@ -86,54 +80,18 @@ class SoapClientAsync extends \SoapClient
     /**
      * @return mixed
      */
-    public function getAsync()
+    public function getMulti()
     {
-        return $this->async;
+        return $this->multi;
     }
 
     /**
-     * @param mixed $async
-     * @return SoapClientAsync
+     * @param mixed $multi
+     * @return ParallelSoapClient
      */
-    public function setAsync($async)
+    public function setMulti($multi)
     {
-        $this->async = $async;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDebug()
-    {
-        return $this->debug;
-    }
-
-    /**
-     * @param mixed $debug
-     * @return SoapClientAsync
-     */
-    public function setDebug($debug)
-    {
-        $this->debug = $debug;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getCurlHeaders()
-    {
-        return $this->curlHeaders;
-    }
-
-    /**
-     * @param array $curlHeaders
-     * @return SoapClientAsync
-     */
-    public function setCurlHeaders(array $curlHeaders)
-    {
-        $this->curlHeaders = $curlHeaders;
+        $this->multi = $multi;
         return $this;
     }
 
@@ -147,7 +105,7 @@ class SoapClientAsync extends \SoapClient
 
     /**
      * @param array $curlOptions
-     * @return SoapClientAsync
+     * @return ParallelSoapClient
      */
     public function setCurlOptions(array $curlOptions)
     {
@@ -165,7 +123,7 @@ class SoapClientAsync extends \SoapClient
 
     /**
      * @param LoggerInterface $logger
-     * @return SoapClientAsync
+     * @return ParallelSoapClient
      */
     public function setLogger(LoggerInterface $logger)
     {
@@ -183,7 +141,7 @@ class SoapClientAsync extends \SoapClient
 
     /**
      * @param bool $logSoapRequest
-     * @return SoapClientAsync
+     * @return ParallelSoapClient
      */
     public function setLogSoapRequest(bool $logSoapRequest)
     {
@@ -201,7 +159,7 @@ class SoapClientAsync extends \SoapClient
 
     /**
      * @param bool $logPrettyXml
-     * @return SoapClientAsync
+     * @return ParallelSoapClient
      */
     public function setLogPrettyXml(bool $logPrettyXml)
     {
@@ -219,7 +177,7 @@ class SoapClientAsync extends \SoapClient
 
     /**
      * @param \Closure $debugFn
-     * @return SoapClientAsync
+     * @return ParallelSoapClient
      */
     public function setDebugFn(\Closure $debugFn)
     {
@@ -309,19 +267,16 @@ class SoapClientAsync extends \SoapClient
         }
 
         /** @var $headers array of headers to be sent with request */
-        $headers = $this->curlHeaders;
-        if (!$headers) {
-            $headers = [
-                'Content-type: text/xml',
-                'charset=utf-8',
-                "Accept: text/xml",
-                "Content-length: " . strlen($request),
-            ];
-        }
+        $defaultHeaders = [
+            'Content-type: text/xml',
+            'charset=utf-8',
+            "Accept: text/xml",
+            "Content-length: " . strlen($request),
+        ];
 
         // pass the soap action in every request from the WSDL if required
         $soapActionFn = $this->soapActionFn;
-        $headers = $soapActionFn($action, $headers);
+        $headers = $soapActionFn($action, $defaultHeaders);
 
         // ssl connection sharing
         if (empty($this->sharedCurlData[$location])) {
@@ -342,7 +297,6 @@ class SoapClientAsync extends \SoapClient
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
         curl_setopt($ch, CURLOPT_SHARE, $sh);
 
         // assign curl options
@@ -368,7 +322,7 @@ class SoapClientAsync extends \SoapClient
      * @throws \Exception
      * @return string|mixed||stdClass
      */
-    public function callSync($method, $args)
+    public function callOne($method, $args)
     {
         try {
             parent::__call($method, $args);
@@ -385,12 +339,12 @@ class SoapClientAsync extends \SoapClient
     }
 
     /**
-     * Call Async method, suppress exception and convert to string
+     * Call Parallel method, suppress exception and convert to string
      * @param string $method
      * @param string $args
      * @return string|mixed||stdClass
      */
-    public function callAsync($method, $args)
+    public function callParallel($method, $args)
     {
         /** generate curl session and add the soap requests to execute it later  */
         try {
@@ -413,7 +367,7 @@ class SoapClientAsync extends \SoapClient
     }
 
     /**
-     * __call Magic method to allow synchronous and asynchronous Soap calls with exception handling
+     * __call Magic method to allow one and Parallel Soap calls with exception handling
      *
      * @param string $method
      * @param string $args
@@ -427,10 +381,10 @@ class SoapClientAsync extends \SoapClient
         /** set current action to the current method call */
         $this->soapMethod = $method;
 
-        if (!$this->async) {
-            return $this->callSync($method, $args);
+        if (!$this->multi) {
+            return $this->callOne($method, $args);
         } else {
-            return $this->callAsync($method, $args);
+            return $this->callParallel($method, $args);
         }
     }
 
@@ -536,7 +490,7 @@ class SoapClientAsync extends \SoapClient
         $this->doRequests($requestIds, $partial);
 
         /** reset the class to synchronous mode */
-        $this->setAsync(false);
+        $this->setMulti(false);
 
         /** parse return response of the performed requests  */
         if ($partial) {
