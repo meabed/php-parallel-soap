@@ -56,13 +56,13 @@ class ParallelSoapClient extends \SoapClient
     public $curlOptions = [];
 
     /** @var \Closure */
-    public $debugFn;
+    protected $debugFn;
 
     /** @var \Closure */
-    public $resFn;
+    protected $resFn;
 
     /** @var \Closure */
-    public $soapActionFn;
+    protected $soapActionFn;
 
     /** @var LoggerInterface */
     public $logger;
@@ -185,21 +185,69 @@ class ParallelSoapClient extends \SoapClient
         return $this;
     }
 
+    /**
+     * @return \Closure
+     */
+    public function getResFn()
+    {
+        return $this->resFn;
+    }
+
+    /**
+     * @param \Closure $resFn
+     * @return ParallelSoapClient
+     */
+    public function setResFn(\Closure $resFn)
+    {
+        $this->resFn = $resFn;
+        return $this;
+    }
+
+    /**
+     * @return \Closure
+     */
+    public function getSoapActionFn()
+    {
+        return $this->soapActionFn;
+    }
+
+    /**
+     * @param \Closure $soapActionFn
+     * @return ParallelSoapClient
+     */
+    public function setSoapActionFn(\Closure $soapActionFn)
+    {
+        $this->soapActionFn = $soapActionFn;
+        return $this;
+    }
+
 
     public function __construct($wsdl, array $options = null)
     {
         parent::__construct($wsdl, $options);
-        $this->logger = $options['logger'] ?? new NullLogger();
-        $this->debugFn = $options['debugFn'] ?? function ($res, $id) {
+
+        // logger
+        $logger = $options['logger'] ?? new NullLogger();
+        $this->setLogger($logger);
+
+        // debug function to add headers / last request / response / etc...
+        $debugFn = $options['debugFn'] ?? function ($res, $id) {
             };
-        $this->resFn = $options['resFn'] ?? function ($method, $res) {
+        $this->setDebugFn($debugFn);
+
+        // result parsing function
+        $resFn = $options['resFn'] ?? function ($method, $res) {
                 return $res;
             };
-        $this->soapActionFn = $options['soapActionFn'] ?? function ($action, $headers) {
+        $this->setResFn($resFn);
+
+        // soapaction function to set in the header
+        $soapActionFn = $options['soapActionFn'] ?? function ($action, $headers) {
                 $headers[] = 'SOAPAction: "' . $action . '"';
                 // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
                 return $headers;
             };
+        $this->setSoapActionFn($soapActionFn);
 
         // cleanup
         unset($options['logger']);
@@ -218,7 +266,7 @@ class ParallelSoapClient extends \SoapClient
      * @param int $one_way If one_way is set to 1, this method returns nothing. Use this where a response is not expected
      *
      * @return string
-     * @throws \SoapFault
+     * @throws \Exception|\SoapFault
      */
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
@@ -250,7 +298,7 @@ class ParallelSoapClient extends \SoapClient
         if (isset($soapResponses[$id])) {
             $data = $soapResponses[$id];
             unset($soapResponses[$id]);
-            if ($data instanceof \SoapFault) {
+            if ($data instanceof \Exception) {
                 throw $data;
             }
 
