@@ -4,7 +4,6 @@ namespace Soap;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
@@ -48,6 +47,15 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
     /** @var bool log soap request */
     public $logSoapRequest = false;
+
+    /** @var array defaultHeaders used for curl request */
+    public $defaultHeaders = [
+        'Content-type' => 'Content-type: text/xml;charset=UTF-8',
+        'Accept' => 'Accept: text/xml',
+        // Empty Expect @https://gms.tf/when-curl-sends-100-continue.html
+        // @https://stackoverflow.com/questions/7551332/do-we-need-the-expect-100-continue-header-in-the-xfire-request-header
+        'Expect' => 'Expect:',
+    ];
 
     /** @var array of all curl_info in the client */
     public $curlInfo = [];
@@ -280,16 +288,11 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
         $id = sha1($location . $request);
 
         /** @var $headers array of headers to be sent with request */
-        $defaultHeaders = [
-            'Content-type: text/xml',
-            'charset=utf-8',
-            "Accept: text/xml",
-            "Content-length: " . strlen($request),
-        ];
+        $this->defaultHeaders['Content-length'] = "Content-length: " . strlen($request);
 
         // pass the soap action in every request from the WSDL if required
         $soapActionFn = $this->soapActionFn;
-        $headers = $soapActionFn($action, $defaultHeaders);
+        $headers = $soapActionFn($action, $this->defaultHeaders);
 
         // ssl connection sharing
         if (empty($this->sharedCurlData[$location])) {
