@@ -40,5 +40,4 @@ class AsyncTest extends BaseExampleCase
     // test log shipping
     // test custom headers
     // add more example with log shipping / result parsing / etc...
-
 }

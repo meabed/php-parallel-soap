@@ -218,19 +218,19 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
         // debug function to add headers / last request / response / etc...
         $debugFn = $options['debugFn'] ?? function ($res, $id) {
-            };
+        };
         $this->setDebugFn($debugFn);
 
         // format xml before logging
         $formatXmlFn = $options['formatXmlFn'] ?? function ($xml) {
                 return $xml;
-            };
+        };
         $this->setFormatXmlFn($formatXmlFn);
 
         // result parsing function
         $resFn = $options['resFn'] ?? function ($method, $res) {
                 return $res;
-            };
+        };
         $this->setResFn($resFn);
 
         // soapAction function to set in the header
@@ -240,7 +240,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
                 $headers[] = 'SOAPAction: "' . $action . '"';
                 // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
                 return $headers;
-            };
+        };
         $this->setSoapActionFn($soapActionFn);
 
         // cleanup

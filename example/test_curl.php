@@ -32,7 +32,6 @@ try {
     var_dump($soapClient->__getLastRequest());
     var_dump($soapClient->__getLastResponse());
     var_dump($soapClient->__getLastResponseHeaders());
-
 } catch (\Exception $e) {
     var_dump($soapClient->__getLastRequest());
     var_dump($soapClient->__getLastResponse());
