@@ -25,22 +25,24 @@
   </p>
 </p>
 
-Parallel Multi-Curl SoapClient that allow us to perform Parallel multiple requests to SoapServer with CURL.
+Parallel Multi-Curl SoapClient that allow us to perform Parallel multiple requests to SoapServer using CURL.
 
-Almost all the companies that provide services using SoapServer and alot of them provide parallelhronous Soap Api but Usually it very poor and it lack the real-time response and its poor comparing to the synchronous Soap Api.
+Working with soap is always frustrating for few reasons:
+- SOAP Messages are complicated and obscure
+- **Always slow Performance** as lack for connection pooling, ssl sharing, tcp tweaking options that comes with curl
+- Sequential Execution in array of multiple requests there no other way except looping and synchronously send request after another 
+- debugging with ability to understand how and what goes through the HTTP " Headers / Request Payload / Response Headers / Response Payload / Error structure etc..."  
 
-I personally have faced this issue many times dealing with 3rd party service providers specially in eCommerce field ( Email marketing, Data mining, etc.. most of other third party tools ) So This class is great help and great tool to use !!
-
-This class will allow you to be able to use different parallelhronous Soap Implementation! that work with Synchronous Soap Api!
+This Client will allow you send request in parallel, while give you ability to hook in the clinet "Logger / Result Function / Customer curl options like tcp connections reusing and ssl session sharing"  
 
 See the [**Examples**](https://github.com/Meabed/php-parallel-soap/tree/master/example) to see how to use it.
 
-Read the Comment in the Example files carefully they are all written to help you understand how the client works and what you can do with it and how to customize it to fit your purpose!
+ Comment in the Example are written to help you understand how the client works and what you can do with it and how to customize it to fit your purpose!
 
 Example [**WSDL**](https://whispering-meadow-99755.herokuapp.com/wsdl.php)
 
 ### Features
-- Client can work in parallelhronous (multi) and Synchronous (single) mode.
+- Client can work in parallel (multi) and Synchronous (single) mode.
 - Multiple calls using **curl_multi_exec**, Does not wait for soap consecutive calls ! This client will save a lot of time and resources doing multiple requests at same time!
 - **SSL / Session Sharing.**
 - __curl_info meta data in response object.
@@ -49,16 +51,14 @@ Example [**WSDL**](https://whispering-meadow-99755.herokuapp.com/wsdl.php)
 - Very easy exception handling in **parallel** mode
 
 ### SOAP Facts
-- SOAP is HTTP Post with structured message in XML Envelope.
+- SOAP is HTTP Post with structured message in XML Envelope and SOAPAction Header.
 - SOAPAction header is used in web services for various reason, most common
     - Route request to specific action
     - Serve Multi-Version of service, if Action Method is part of the XML Envelope
    
-   
-## Need Help ?
-I'm Always glad ot help and assist. so if you have an idea that could make this project better
 
-Submit git issue or contact me [www.meabed.com](http://meabed.com)
+## Need Help?
+If you ever hated SOAP for complexity or performance and you cannot take it anymore, I could help! drop me a line here [meabed.com](http://meabed.com)
 
 
 ## Contributing
