@@ -218,19 +218,19 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
         // debug function to add headers / last request / response / etc...
         $debugFn = $options['debugFn'] ?? function ($res, $id) {
-        };
+            };
         $this->setDebugFn($debugFn);
 
         // format xml before logging
         $formatXmlFn = $options['formatXmlFn'] ?? function ($xml) {
                 return $xml;
-        };
+            };
         $this->setFormatXmlFn($formatXmlFn);
 
         // result parsing function
         $resFn = $options['resFn'] ?? function ($method, $res) {
                 return $res;
-        };
+            };
         $this->setResFn($resFn);
 
         // soapAction function to set in the header
@@ -240,7 +240,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
                 $headers[] = 'SOAPAction: "' . $action . '"';
                 // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
                 return $headers;
-        };
+            };
         $this->setSoapActionFn($soapActionFn);
 
         // cleanup
@@ -292,7 +292,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
         // pass the soap action in every request from the WSDL if required
         $soapActionFn = $this->soapActionFn;
-        $headers = $soapActionFn($action, $this->defaultHeaders);
+        $headers = array_values($soapActionFn($action, $this->defaultHeaders));
 
         // ssl connection sharing
         if (empty($this->sharedCurlData[$location])) {
@@ -357,7 +357,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * @param string $args
      * @return string|mixed
      */
-    public function callParallel($method, $args)
+    public function callMulti($method, $args)
     {
         /** generate curl session and add the soap requests to execute it later  */
         try {
@@ -397,7 +397,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
         if (!$this->multi) {
             return $this->callOne($method, $args);
         } else {
-            return $this->callParallel($method, $args);
+            return $this->callMulti($method, $args);
         }
     }
 
@@ -569,6 +569,8 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
             $id = $this->lastRequestId;
             $this->addDebugData($res, $id);
         } catch (\Exception $ex) {
+            // todo find better pattern for handling non-xml document with error handling
+            // if (strtolower($ex->getMessage()) == 'looks like we got no XML document') {}
             $this->addDebugData($ex, $this->lastRequestId);
             throw $ex;
         }
