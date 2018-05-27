@@ -55,6 +55,23 @@ class SingleTest extends BaseCrcindCase
         }
     }
 
+    public function testGotNoXml()
+    {
+        try {
+            $this->parallelSoapClient->LookupCity(['Mo', 'Meabed ']);
+        } catch (\Exception $e) {
+            // this is only available on trace=1 option in soapclient
+            $soapRequest = $this->parallelSoapClient->__getLastRequest();
+            $exceptionMessage = $this->parallelSoapClient->__getLastResponse();
+
+            $this->assertEquals(\SoapFault::class, get_class($e));
+            $this->assertContains('looks like we got no XML document', $e->getMessage());
+            $this->assertContains('Bad Request', $exceptionMessage);
+        }
+
+        exit;
+    }
+
     // todo
     // test headers soap action
     // test curl info / debug data
