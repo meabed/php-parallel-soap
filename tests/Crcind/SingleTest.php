@@ -68,8 +68,6 @@ class SingleTest extends BaseCrcindCase
             $this->assertContains('looks like we got no XML document', $e->getMessage());
             $this->assertContains('Bad Request', $exceptionMessage);
         }
-
-        exit;
     }
 
     // todo
