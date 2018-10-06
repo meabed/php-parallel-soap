@@ -22,6 +22,9 @@
     <a href="https://www.paypal.me/meabed">
       <img src="https://img.shields.io/badge/paypal-donate-179BD7.svg?style=flat-squares" alt="Donate">
     </a>
+    <a href="https://meabed.com">
+      <img src="https://img.shields.io/badge/Author-blog-green.svg?style=flat-square" alt="Authoer Blog">
+    </a>
   </p>
 </p>
 
