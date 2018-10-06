@@ -1,13 +1,13 @@
 <p align="center">
   <h3 align="center"> Parallel, Multi-Curl PHP SoapClient </h3>
   <p align="center">
-    <a href="https://travis-ci.org/Meabed/php-parallel-soap">
-      <img src="https://img.shields.io/travis/Meabed/php-parallel-soap.svg?branch=master&style=flat-square" alt="Build Status">
+    <a href="https://travis-ci.org/meabed/php-parallel-soap">
+      <img src="https://img.shields.io/travis/meabed/php-parallel-soap.svg?branch=master&style=flat-square" alt="Build Status">
     </a>
     <a href="LICENSE.md">
       <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License">
     </a>
-    <a class="badge-align" href="https://www.codacy.com/app/Meabed/php-parallel-soap">
+    <a class="badge-align" href="https://www.codacy.com/app/meabed/php-parallel-soap">
       <img src="https://img.shields.io/codacy/grade/266923eec70e41418be8f981a5b4cefe.svg?style=flat-square"/>
     </a>        
     <a href="https://scrutinizer-ci.com/g/meabed/php-parallel-soap/?branch=master">
