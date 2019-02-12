@@ -23,7 +23,6 @@ class ParallelTest extends BaseDneCase
         $this->assertEquals('7', $rs[$req1]);
         $this->assertEquals('3', $rs[$req2]);
         $this->assertEquals('8', $rs[$req3]);
-
     }
 
     // todo
@@ -34,5 +33,4 @@ class ParallelTest extends BaseDneCase
     // test log shipping
     // test custom headers
     // add more example with log shipping / result parsing / etc...
-
 }
