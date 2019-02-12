@@ -2,10 +2,9 @@ dist: trusty
 language: php
 
 php:
-  - 7.0
-  - 7.1
   - 7.2
-  #- hhvm
+  - 7.3
+  #- nightly
 
 
 # This triggers builds to run on the new TravisCI infrastructure.
@@ -18,13 +17,13 @@ cache:
     - $HOME/.composer/cache
 
 before_script:
-  - sleep 10
   - composer self-update
-  - travis_retry make deps-install-dev
+  - travis_retry composer install-dev
 
 script:
-  #- vendor/bin/phpcs --standard=psr2 src/ todo enable it later
-  - make unit-cov
+  - composer check-style
+  # - composer stan todo
+  - composer test-cov
 
 after_script:
   - |

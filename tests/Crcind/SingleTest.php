@@ -29,7 +29,7 @@ class SingleTest extends BaseCrcindCase
             $this->parallelSoapClient->AddIntegerUnknown('demo', '123456');
         } catch (\Exception $e) {
             $this->assertEquals(\SoapFault::class, get_class($e));
-            $this->assertContains('Function ("AddIntegerUnknown") is not a valid method for this service', $e->getMessage());
+            $this->assertStringContainsString('Function ("AddIntegerUnknown") is not a valid method for this service', $e->getMessage());
         }
     }
 
@@ -51,7 +51,7 @@ class SingleTest extends BaseCrcindCase
             $rs = $this->parallelSoapClient->DivideInteger($data);
         } catch (\Exception $e) {
             $this->assertEquals(\SoapFault::class, get_class($e));
-            $this->assertContains('DTD are not supported by SOAP', $e->getMessage());
+            $this->assertStringContainsString('DTD are not supported by SOAP', $e->getMessage());
         }
     }
 
@@ -65,8 +65,8 @@ class SingleTest extends BaseCrcindCase
             $exceptionMessage = $this->parallelSoapClient->__getLastResponse();
 
             $this->assertEquals(\SoapFault::class, get_class($e));
-            $this->assertContains('looks like we got no XML document', $e->getMessage());
-            $this->assertContains('Bad Request', $exceptionMessage);
+            $this->assertStringContainsString('looks like we got no XML document', $e->getMessage());
+            $this->assertStringContainsString('Bad Request', $exceptionMessage);
         }
     }
 

@@ -15,7 +15,7 @@ function post_curl($url, $post_data)
 //
 //if (false) {
 //    $dataCurl = '';
-//    echo post_curl('http://whispering-meadow-99755.herokuapp.com/server.php', $dataCurl);
+//    echo post_curl('http://soap-server-hello.herokuapp.com/server.php', $dataCurl);
 //}
 //
 //

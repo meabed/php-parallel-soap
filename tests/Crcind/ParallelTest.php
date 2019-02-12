@@ -16,7 +16,6 @@ class ParallelTest extends BaseCrcindCase
                 CURLOPT_SSL_VERIFYPEER => false,
             ]
         );
-
     }
 
     public function testAddInteger()
@@ -45,7 +44,6 @@ class ParallelTest extends BaseCrcindCase
 
         $this->assertEquals('8', $rs[$req3]);
         $this->assertEquals('8', $rs[$req4]);
-
     }
 
     public function testInvalidMethod()
@@ -54,7 +52,7 @@ class ParallelTest extends BaseCrcindCase
         // exception return
         $req3 = $this->parallelSoapClient->AddIntegerUnknown(['Arg1' => 3, 'Arg2' => 5]);
 
-        $this->assertContains('Function ("AddIntegerUnknown") is not a valid method for this service', $req3);
+        $this->assertStringContainsString('Function ("AddIntegerUnknown") is not a valid method for this service', $req3);
     }
 
     public function testSwitchMultiClient()
@@ -74,7 +72,6 @@ class ParallelTest extends BaseCrcindCase
         $rs = $this->parallelSoapClient->AddInteger(['Arg1' => 3, 'Arg2' => 10]);
         $this->assertEquals('13', $rs);
         $this->parallelSoapClient->setMulti(true);
-
     }
 
     public function testGotNoXml()
@@ -98,8 +95,8 @@ class ParallelTest extends BaseCrcindCase
         // this is only available on trace=1 option in soapclient
 
         $this->assertEquals(\SoapFault::class, get_class($rs[$req4]));
-        $this->assertContains('looks like we got no XML document', $rs[$req4]->getMessage());
-        //$this->assertContains('Bad Request', $exceptionMessage);
+        $this->assertStringContainsString('looks like we got no XML document', $rs[$req4]->getMessage());
+        //$this->assertStringContainsString('Bad Request', $exceptionMessage);
     }
 
     // todo
@@ -110,5 +107,4 @@ class ParallelTest extends BaseCrcindCase
     // test log shipping
     // test custom headers
     // add more example with log shipping / result parsing / etc...
-
 }

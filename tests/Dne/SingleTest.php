@@ -29,7 +29,7 @@ class SingleTest extends BaseDneCase
             $this->parallelSoapClient->AddUnkown('demo', '123456');
         } catch (\Exception $e) {
             $this->assertEquals(\SoapFault::class, get_class($e));
-            $this->assertContains('Function ("AddUnkown") is not a valid method for this service', $e->getMessage());
+            $this->assertStringContainsString('Function ("AddUnkown") is not a valid method for this service', $e->getMessage());
         }
     }
 
@@ -40,7 +40,7 @@ class SingleTest extends BaseDneCase
             $this->parallelSoapClient->Add(['a' => 1]);
         } catch (\Exception $e) {
             $this->assertEquals(\SoapFault::class, get_class($e));
-            $this->assertContains('object has no \'intA\' property', $e->getMessage());
+            $this->assertStringContainsString('object has no \'intA\' property', $e->getMessage());
         }
     }
 

@@ -93,6 +93,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
     /**
      * @param mixed $multi
+     *
      * @return ParallelSoapClient
      */
     public function setMulti($multi)
@@ -111,6 +112,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
     /**
      * @param array $curlOptions
+     *
      * @return ParallelSoapClient
      */
     public function setCurlOptions(array $curlOptions)
@@ -129,6 +131,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
     /**
      * @param bool $logSoapRequest
+     *
      * @return ParallelSoapClient
      */
     public function setLogSoapRequest(bool $logSoapRequest)
@@ -147,6 +150,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
     /**
      * @param \Closure $debugFn
+     *
      * @return ParallelSoapClient
      */
     public function setDebugFn(\Closure $debugFn)
@@ -165,6 +169,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
     /**
      * @param \Closure $formatXmlFn
+     *
      * @return ParallelSoapClient
      */
     public function setFormatXmlFn(\Closure $formatXmlFn)
@@ -183,6 +188,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
     /**
      * @param \Closure $resFn
+     *
      * @return ParallelSoapClient
      */
     public function setResFn(\Closure $resFn)
@@ -201,6 +207,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
     /**
      * @param \Closure $soapActionFn
+     *
      * @return ParallelSoapClient
      */
     public function setSoapActionFn(\Closure $soapActionFn)
@@ -218,19 +225,19 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
         // debug function to add headers / last request / response / etc...
         $debugFn = $options['debugFn'] ?? function ($res, $id) {
-            };
+        };
         $this->setDebugFn($debugFn);
 
         // format xml before logging
         $formatXmlFn = $options['formatXmlFn'] ?? function ($xml) {
                 return $xml;
-            };
+        };
         $this->setFormatXmlFn($formatXmlFn);
 
         // result parsing function
         $resFn = $options['resFn'] ?? function ($method, $res) {
                 return $res;
-            };
+        };
         $this->setResFn($resFn);
 
         // soapAction function to set in the header
@@ -240,7 +247,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
                 $headers[] = 'SOAPAction: "' . $action . '"';
                 // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
                 return $headers;
-            };
+        };
         $this->setSoapActionFn($soapActionFn);
 
         // cleanup
@@ -255,11 +262,11 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     /**
      * Soap __doRequest() Method with CURL Implementation
      *
-     * @param string $request The XML SOAP request
+     * @param string $request  The XML SOAP request
      * @param string $location The URL to request
-     * @param string $action The SOAP action
-     * @param int $version The SOAP version
-     * @param int $one_way If one_way is set to 1, this method returns nothing. Use this where a response is not expected
+     * @param string $action   The SOAP action
+     * @param int    $version  The SOAP version
+     * @param int    $one_way  If one_way is set to 1, this method returns nothing. Use this where a response is not expected
      *
      * @return string
      * @throws \Exception|\SoapFault
@@ -332,12 +339,14 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
     /**
      * Call Sync method, act like normal soap method with extra implementation if needed
+     *
      * @param string $method
-     * @param string $args
+     * @param array  $args
+     *
      * @throws \Exception|\SoapFault
      * @return string|mixed
      */
-    public function callOne($method, $args)
+    public function callOne(string $method, array $args)
     {
         try {
             parent::__call($method, $args);
@@ -353,11 +362,13 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
     /**
      * Call Parallel method, suppress exception and convert to string
+     *
      * @param string $method
-     * @param string $args
+     * @param array  $args
+     *
      * @return string|mixed
      */
-    public function callMulti($method, $args)
+    public function callMulti(string $method, array $args)
     {
         /** generate curl session and add the soap requests to execute it later  */
         try {
@@ -383,7 +394,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * __call Magic method to allow one and Parallel Soap calls with exception handling
      *
      * @param string $method
-     * @param string $args
+     * @param array  $args
      *
      * @return string|mixed
      * @throws \Exception
@@ -405,7 +416,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * Execute all or some items from $this->soapRequests
      *
      * @param mixed $requestIds
-     * @param bool $partial
+     * @param bool  $partial
      */
     public function doRequests($requestIds = [], $partial = false)
     {
@@ -553,7 +564,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     /**
      * Parse Response of Soap Requests with parent::__doRequest()
      *
-     * @param string $method
+     * @param string       $method
      * @param string|array $args
      *
      * @throws \Exception|\SoapFault|
@@ -600,6 +611,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * format xml
      *
      * @param $request
+     *
      * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
      * @return mixed
      */
