@@ -97,3 +97,4 @@ coverage.clover
 /report
 !.gitkeep
 .phpunit.result.cache
+build

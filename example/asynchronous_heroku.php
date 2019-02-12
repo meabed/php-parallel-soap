@@ -6,14 +6,14 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // @link http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
 
 /**
- * The test soap Server is Located @ https://whispering-meadow-99755.herokuapp.com/wsdl.php
+ * The test soap Server is Located @ https://soap-server-hello.herokuapp.com/wsdl.php
  */
 
 /** the main soap class */
 require_once(__DIR__ . '/../src/ParallelSoapClient.php');
 
 /** @var string $wsdl , This is the test server i have generated to test the class */
-$wsdl = "https://whispering-meadow-99755.herokuapp.com/wsdl.php";
+$wsdl = "https://soap-server-hello.herokuapp.com/wsdl.php";
 // parse response function
 $parseResultFn = function ($method, $res) {
     switch ($method) {

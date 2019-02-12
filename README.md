@@ -42,7 +42,7 @@ See the [**Examples**](https://github.com/Meabed/php-parallel-soap/tree/master/e
 
  Comment in the Example are written to help you understand how the client works and what you can do with it and how to customize it to fit your purpose!
 
-Example [**WSDL**](https://whispering-meadow-99755.herokuapp.com/wsdl.php)
+Example [**WSDL**](https://soap-server-hello.herokuapp.com/wsdl.php)
 
 ### Features
 - Client can work in parallel (multi) and Synchronous (single) mode.
