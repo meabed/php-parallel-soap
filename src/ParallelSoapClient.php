@@ -522,7 +522,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      *
      * @return mixed $resArr
      */
-    public function getMultiResponses(array $responses = [])
+    public function getMultiResponses(array $responses = []): mixed
     {
         $resArr = [];
         $this->soapMethod = static::GET_RESPONSE_CONST;
@@ -597,7 +597,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
      * @return mixed
      */
-    public function addDebugData($res, $id)
+    public function addDebugData($res, $id) : mixed
     {
         $fn = $this->debugFn;
         return $fn($res, $id);
@@ -611,7 +611,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
      * @return mixed
      */
-    public function formatXml($request)
+    public function formatXml($request) : mixed
     {
         $fn = $this->formatXmlFn;
         return $fn($request);
