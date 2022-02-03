@@ -1,4 +1,4 @@
-name: CI
+name: CI7.3
 
 on:
   push:
