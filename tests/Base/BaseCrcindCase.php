@@ -43,9 +43,9 @@ class BaseCrcindCase extends TestCase
 
 
         // @link http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
-        /** @var string $wsdl , This is the test server i have generated to test the class */
+        /** @var $wsdl , This is the test server i have generated to test the class */
         $wsdl = "http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL";
-        /** @var array $options , array of options for the soap client */
+        /** @var $options , array of options for the soap client */
         $options = [
             'connection_timeout' => 40,
             'trace' => true,
