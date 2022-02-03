@@ -1,18 +1,7 @@
 {
   "name": "meabed/php-parallel-soap",
-  "version": "2.0",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Mohamed Meabed",
-      "email": "mo.meabed@gmail.com"
-    }
-  ],
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "type": "library",
+  "version": "3.0",
   "description": "Multi curl SoapClient that allow to perform multiple requests to SoapServer",
-  "homepage": "https://github.com/Meabed/php-parallel-soap",
   "keywords": [
     "Soap",
     "Curl",
@@ -20,6 +9,51 @@
     "parallel",
     "Asynchronous"
   ],
+  "homepage": "https://github.com/meabed/php-parallel-soap",
+  "license": "MIT",
+  "type": "library",
+  "scripts": {
+    "check-style": "phpcs src tests",
+    "fix-style": "phpcbf src tests",
+    "install-dev": "composer install --no-interaction",
+    "install-prod": "composer install --no-dev --no-interaction",
+    "lint": "phplint",
+    "stan": "phpstan analyse src",
+    "test": "phpunit",
+    "test-cov": "phpunit --coverage-text --coverage-clover=coverage.xml",
+    "test-html": "phpunit --coverage-text --coverage-clover=coverage.xml --coverage-html=./report/",
+    "update-dev": "composer update",
+    "update-prod": "composer update --no-dev"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "process-timeout": 1000000,
+    "sort-packages": true
+  },
+  "authors": [
+    {
+      "name": "Mohamed Meabed",
+      "email": "mo.meabed@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Soap\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "3.0.x-dev"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "php": ">=7.2",
     "ext-soap": "*",
@@ -31,39 +65,5 @@
     "squizlabs/php_codesniffer": "3.6.2",
     "overtrue/phplint": "1.2.4",
     "phpstan/phpstan": "1.4.2"
-  },
-  "autoload": {
-    "psr-4": {
-      "Soap\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Tests\\": "tests/"
-    }
-  },
-  "scripts": {
-    "update-dev": "composer update",
-    "install-dev": "composer install --no-interaction",
-    "update-prod": "composer update --no-dev",
-    "install-prod": "composer install --no-dev --no-interaction",
-    "stan": "phpstan analyse src",
-    "test": "phpunit",
-    "test-cov": "phpunit --coverage-text --coverage-clover=coverage.xml",
-    "test-html": "phpunit --coverage-text --coverage-clover=coverage.xml --coverage-html=./report/",
-    "lint": "phplint",
-    "check-style": "phpcs src tests",
-    "fix-style": "phpcbf src tests"
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "2.0.x-dev"
-    }
-  },
-  "config": {
-    "optimize-autoloader": true,
-    "preferred-install": "dist",
-    "sort-packages": true,
-    "process-timeout": 1000000
   }
 }

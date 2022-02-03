@@ -15,7 +15,7 @@ class StdoutLogger extends AbstractLogger
      *
      * @return void
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []):void
     {
         $datetime = date('Y-m-d H:i:s');
         $formatted = sprintf("[%s] - %s - %s\n", $datetime, $level, $message);

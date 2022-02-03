@@ -12,7 +12,7 @@ class ParallelTest extends BaseDneCase
         $this->parallelSoapClient->setMulti(true);
     }
 
-    public function testAddInteger()
+    public function testAddInteger(): void
     {
         $req1 = $this->parallelSoapClient->Add(['intA' => 4, 'intB' => 3]);
         $req2 = $this->parallelSoapClient->Add(['intA' => 1, 'intB' => 2]);

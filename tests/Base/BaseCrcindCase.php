@@ -10,26 +10,29 @@ class BaseCrcindCase extends TestCase
     /** @var \Soap\ParallelSoapClient */
     public $parallelSoapClient;
 
+    /**
+     * @throws \SoapFault
+     */
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
 
         // parse response function
-        $soapActionFn = function ($action, $headers) {
+        $soapActionFn = static function ($action, $headers) {
             $headers[] = 'SOAPAction: "' . $action . '"';
             // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
             return $headers;
         };
 
         // parse response function
-        $parseResultFn = function ($method, $res) {
+        $parseResultFn = static function ($method, $res) {
             if (isset($res->{$method . 'Result'})) {
                 return $res->{$method . 'Result'};
             }
             return $res;
         };
 
-        $formatXmlFn = function ($request) {
+        $formatXmlFn = static function ($request) {
             $dom = new \DOMDocument();
             $dom->preserveWhiteSpace = false;
             $dom->loadXML($request);

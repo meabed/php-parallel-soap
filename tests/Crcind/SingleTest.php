@@ -12,7 +12,7 @@ class SingleTest extends BaseCrcindCase
         $this->parallelSoapClient->setMulti(false);
     }
 
-    public function testAddInteger()
+    public function testAddInteger(): void
     {
 
         $data = [
@@ -22,7 +22,7 @@ class SingleTest extends BaseCrcindCase
         $this->assertEquals('7', $rs);
     }
 
-    public function testInvalidMethod()
+    public function testInvalidMethod(): void
     {
         // is not a valid method
         try {
@@ -33,7 +33,7 @@ class SingleTest extends BaseCrcindCase
         }
     }
 
-    public function testDivideInteger()
+    public function testDivideInteger(): void
     {
         $data = [
             'Arg1' => 4, 'Arg2' => 2,
@@ -42,7 +42,7 @@ class SingleTest extends BaseCrcindCase
         $this->assertEquals('2', $rs);
     }
 
-    public function testDivideIntegerException()
+    public function testDivideIntegerException(): void
     {
         $data = [
             'Arg1' => 4, 'Arg2' => 0,
@@ -55,7 +55,7 @@ class SingleTest extends BaseCrcindCase
         }
     }
 
-    public function testGotNoXml()
+    public function testGotNoXml(): void
     {
         try {
             $this->parallelSoapClient->LookupCity(['Mo', 'Meabed ']);

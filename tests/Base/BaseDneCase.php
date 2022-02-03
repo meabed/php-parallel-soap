@@ -15,7 +15,7 @@ class BaseDneCase extends TestCase
         parent::__construct($name, $data, $dataName);
 
         // parse response function
-        $parseResultFn = function ($method, $res) {
+        $parseResultFn = static function ($method, $res) {
             if (isset($res->{$method . 'Result'})) {
                 return $res->{$method . 'Result'};
             }

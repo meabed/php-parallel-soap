@@ -79,9 +79,9 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     public $sharedCurlData = [];
 
     /** @var string getRequestResponse action constant used for parsing the xml with from parent::__doRequest */
-    const GET_RESPONSE_CONST = 'getRequestResponseMethod';
+    public const GET_RESPONSE_CONST = 'getRequestResponseMethod';
     /** @var string text prefix, if error happen due to SOAP error before its executed ex:invalid method */
-    const ERROR_STR = '*ERROR*';
+    public const ERROR_STR = '*ERROR*';
 
     /**
      * @return mixed
@@ -96,7 +96,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      *
      * @return ParallelSoapClient
      */
-    public function setMulti($multi)
+    public function setMulti($multi): ParallelSoapClient
     {
         $this->multi = $multi;
         return $this;
@@ -105,7 +105,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     /**
      * @return array
      */
-    public function getCurlOptions()
+    public function getCurlOptions(): array
     {
         return $this->curlOptions;
     }
@@ -115,7 +115,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      *
      * @return ParallelSoapClient
      */
-    public function setCurlOptions(array $curlOptions)
+    public function setCurlOptions(array $curlOptions): ParallelSoapClient
     {
         $this->curlOptions = $curlOptions;
         return $this;
@@ -124,7 +124,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     /**
      * @return bool
      */
-    public function isLogSoapRequest()
+    public function isLogSoapRequest(): bool
     {
         return $this->logSoapRequest;
     }
@@ -134,7 +134,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      *
      * @return ParallelSoapClient
      */
-    public function setLogSoapRequest(bool $logSoapRequest)
+    public function setLogSoapRequest(bool $logSoapRequest): ParallelSoapClient
     {
         $this->logSoapRequest = $logSoapRequest;
         return $this;
@@ -143,7 +143,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     /**
      * @return \Closure
      */
-    public function getDebugFn()
+    public function getDebugFn(): \Closure
     {
         return $this->debugFn;
     }
@@ -153,7 +153,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      *
      * @return ParallelSoapClient
      */
-    public function setDebugFn(\Closure $debugFn)
+    public function setDebugFn(\Closure $debugFn): ParallelSoapClient
     {
         $this->debugFn = $debugFn;
         return $this;
@@ -162,7 +162,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     /**
      * @return \Closure
      */
-    public function getFormatXmlFn()
+    public function getFormatXmlFn(): \Closure
     {
         return $this->formatXmlFn;
     }
@@ -172,7 +172,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      *
      * @return ParallelSoapClient
      */
-    public function setFormatXmlFn(\Closure $formatXmlFn)
+    public function setFormatXmlFn(\Closure $formatXmlFn): ParallelSoapClient
     {
         $this->formatXmlFn = $formatXmlFn;
         return $this;
@@ -181,7 +181,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     /**
      * @return \Closure
      */
-    public function getResFn()
+    public function getResFn(): \Closure
     {
         return $this->resFn;
     }
@@ -191,7 +191,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      *
      * @return ParallelSoapClient
      */
-    public function setResFn(\Closure $resFn)
+    public function setResFn(\Closure $resFn): ParallelSoapClient
     {
         $this->resFn = $resFn;
         return $this;
@@ -200,7 +200,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     /**
      * @return \Closure
      */
-    public function getSoapActionFn()
+    public function getSoapActionFn(): \Closure
     {
         return $this->soapActionFn;
     }
@@ -210,7 +210,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      *
      * @return ParallelSoapClient
      */
-    public function setSoapActionFn(\Closure $soapActionFn)
+    public function setSoapActionFn(\Closure $soapActionFn): ParallelSoapClient
     {
         $this->soapActionFn = $soapActionFn;
         return $this;
@@ -251,10 +251,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
         $this->setSoapActionFn($soapActionFn);
 
         // cleanup
-        unset($options['logger']);
-        unset($options['debugFn']);
-        unset($options['resFn']);
-        unset($options['soapActionFn']);
+        unset($options['logger'], $options['debugFn'], $options['resFn'], $options['soapActionFn']);
 
         parent::__construct($wsdl, $options);
     }
@@ -262,16 +259,15 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     /**
      * Soap __doRequest() Method with CURL Implementation
      *
-     * @param string $request  The XML SOAP request
+     * @param string $request The XML SOAP request
      * @param string $location The URL to request
-     * @param string $action   The SOAP action
-     * @param int    $version  The SOAP version
-     * @param int    $one_way  If one_way is set to 1, this method returns nothing. Use this where a response is not expected
+     * @param string $action The SOAP action
+     * @param int $version The SOAP version
+     * @param bool $oneWay If one_way is set to 1, this method returns nothing. Use this where a response is not expected
      *
      * @return string
-     * @throws \Exception|\SoapFault
      */
-    public function __doRequest($request, $location, $action, $version, $one_way = 0)
+    public function __doRequest(string $request, string $location, string $action, int $version, bool $oneWay = false): ?string
     {
         $shouldGetResponse = ($this->soapMethod == static::GET_RESPONSE_CONST);
 
@@ -384,7 +380,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
             $res = $this->lastRequestId;
         } catch (\Exception $ex) {
             /** catch any SoapFault [is not a valid method for this service] and return null */
-            $res = static::ERROR_STR . ':' . $method . ' - ' . $ex->getCode() . ' - ' . $ex->getMessage() . ' - rand::' . rand();
+            $res = static::ERROR_STR . ':' . $method . ' - ' . $ex->getCode() . ' - ' . $ex->getMessage() . ' - rand::' . mt_rand();
         }
 
         return $res;
@@ -393,32 +389,32 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     /**
      * __call Magic method to allow one and Parallel Soap calls with exception handling
      *
-     * @param string $method
-     * @param array  $args
+     * @param string $name
+     * @param array $args
      *
      * @return string|mixed
      * @throws \Exception
      * @throws \SoapFault
      */
-    public function __call($method, $args)
+    public function __call($name, array $args): mixed
     {
         /** set current action to the current method call */
-        $this->soapMethod = $method;
+        $this->soapMethod = $name;
 
         if (!$this->multi) {
-            return $this->callOne($method, $args);
-        } else {
-            return $this->callMulti($method, $args);
+            return $this->callOne($name, $args);
         }
+
+        return $this->callMulti($name, $args);
     }
 
     /**
      * Execute all or some items from $this->soapRequests
      *
      * @param mixed $requestIds
-     * @param bool  $partial
+     * @param bool $partial
      */
-    public function doRequests($requestIds = [], $partial = false)
+    public function doRequests($requestIds = [], bool $partial = false): void
     {
         $allSoapRequests = &$this->soapRequests;
         $soapResponses = &$this->soapResponses;
@@ -487,7 +483,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      *
      * @return string $res
      */
-    public function run($requestIds = [])
+    public function run(array $requestIds = []): mixed
     {
         $partial = false;
 
@@ -526,7 +522,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      *
      * @return mixed $resArr
      */
-    public function getMultiResponses($responses = [])
+    public function getMultiResponses(array $responses = [])
     {
         $resArr = [];
         $this->soapMethod = static::GET_RESPONSE_CONST;
@@ -564,13 +560,13 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     /**
      * Parse Response of Soap Requests with parent::__doRequest()
      *
-     * @param string       $method
+     * @param string $method
      * @param string|array $args
      *
-     * @throws \Exception|\SoapFault|
      * @return string $res
+     *@throws \Exception|\SoapFault|
      */
-    public function getResponseResult($method, $args)
+    public function getResponseResult(string $method, $args): string
     {
         $this->soapMethod = static::GET_RESPONSE_CONST;
 

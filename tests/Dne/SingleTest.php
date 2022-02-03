@@ -13,7 +13,7 @@ class SingleTest extends BaseDneCase
         $this->parallelSoapClient->setMulti(false);
     }
 
-    public function testAddInteger()
+    public function testAddInteger(): void
     {
         $data = [
             'intA' => 4, 'intB' => 3,
@@ -22,7 +22,7 @@ class SingleTest extends BaseDneCase
         $this->assertEquals('7', $rs);
     }
 
-    public function testInvalidMethod()
+    public function testInvalidMethod(): void
     {
         // is not a valid method
         try {
@@ -33,7 +33,7 @@ class SingleTest extends BaseDneCase
         }
     }
 
-    public function testInvalidParam()
+    public function testInvalidParam(): void
     {
         // invalid params exception
         try {

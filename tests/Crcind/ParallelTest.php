@@ -18,7 +18,7 @@ class ParallelTest extends BaseCrcindCase
         );
     }
 
-    public function testAddInteger()
+    public function testAddInteger(): void
     {
 
         $req1 = $this->parallelSoapClient->AddInteger(['Arg1' => 4, 'Arg2' => 3]);
@@ -32,7 +32,7 @@ class ParallelTest extends BaseCrcindCase
         $this->assertEquals('8', $rs[$req3]);
     }
 
-    public function testAddIntegerDuplicate()
+    public function testAddIntegerDuplicate(): void
     {
 
         $req3 = $this->parallelSoapClient->AddInteger(['Arg1' => 3, 'Arg2' => 5]);
@@ -46,7 +46,7 @@ class ParallelTest extends BaseCrcindCase
         $this->assertEquals('8', $rs[$req4]);
     }
 
-    public function testInvalidMethod()
+    public function testInvalidMethod(): void
     {
 
         // exception return
@@ -55,7 +55,7 @@ class ParallelTest extends BaseCrcindCase
         $this->assertStringContainsString('Function ("AddIntegerUnknown") is not a valid method for this service', $req3);
     }
 
-    public function testSwitchMultiClient()
+    public function testSwitchMultiClient(): void
     {
 
         $req1 = $this->parallelSoapClient->AddInteger(['Arg1' => 4, 'Arg2' => 3]);
@@ -74,7 +74,7 @@ class ParallelTest extends BaseCrcindCase
         $this->parallelSoapClient->setMulti(true);
     }
 
-    public function testGotNoXml()
+    public function testGotNoXml(): void
     {
         $req1 = $this->parallelSoapClient->AddInteger(['Arg1' => 4, 'Arg2' => 3]);
         $req2 = $this->parallelSoapClient->AddInteger(['Arg1' => 1, 'Arg2' => 2]);
