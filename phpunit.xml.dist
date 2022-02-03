@@ -27,5 +27,6 @@
     </logging>
     <php>
         <ini name="memory_limit" value="2512M" />
+        <ini name="allow_url_fopen" value="1" />
     </php>
 </phpunit>

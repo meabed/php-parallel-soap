@@ -224,18 +224,18 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
         $this->setLogger($logger);
 
         // debug function to add headers / last request / response / etc...
-        $debugFn = $options['debugFn'] ?? function ($res, $id) {
+        $debugFn = $options['debugFn'] ?? static function ($res, $id) {
         };
         $this->setDebugFn($debugFn);
 
         // format xml before logging
-        $formatXmlFn = $options['formatXmlFn'] ?? function ($xml) {
+        $formatXmlFn = $options['formatXmlFn'] ?? static function ($xml) {
                 return $xml;
         };
         $this->setFormatXmlFn($formatXmlFn);
 
         // result parsing function
-        $resFn = $options['resFn'] ?? function ($method, $res) {
+        $resFn = $options['resFn'] ?? static function ($method, $res) {
                 return $res;
         };
         $this->setResFn($resFn);
@@ -243,7 +243,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
         // soapAction function to set in the header
         // Ex: SOAPAction: "http://tempuri.org/SOAP.Demo.AddInteger"
         // Ex: SOAPAction: "http://webservices.amadeus.com/PNRRET_11_3_1A"
-        $soapActionFn = $options['soapActionFn'] ?? function ($action, $headers) {
+        $soapActionFn = $options['soapActionFn'] ?? static function ($action, $headers) {
                 $headers[] = 'SOAPAction: "' . $action . '"';
                 // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
                 return $headers;
@@ -285,9 +285,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
         $soapRequests = &$this->soapRequests;
 
-        /** @var $id string represent hashId of each request based on the request body
-         * to avoid multiple calls for the same request if exists
-         */
+        /** @var string $id represent hashId of each request based on the request body to avoid multiple calls for the same request if exists */
         $id = sha1($location . $request);
 
         /** @var $headers array of headers to be sent with request */
@@ -344,16 +342,10 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      */
     public function callOne(string $method, array $args)
     {
-        try {
-            parent::__call($method, $args);
-            /** parse the xml response or throw an exception */
-            $this->xmlResponse = $this->run([$this->lastRequestId]);
-            $res = $this->getResponseResult($method, $args);
-        } catch (\Exception $e) {
-            throw $e;
-        }
-
-        return $res;
+        parent::__call($method, $args);
+        /** parse the xml response or throw an exception */
+        $this->xmlResponse = $this->run([$this->lastRequestId]);
+        return $this->getResponseResult($method, $args);
     }
 
     /**
@@ -564,7 +556,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * @param string|array $args
      *
      * @return string $res
-     *@throws \Exception|\SoapFault|
+     * @throws \Exception|\SoapFault|
      */
     public function getResponseResult(string $method, $args): string
     {
