@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b116cb22692ed0e2563df8e25e7d3ad",
+    "content-hash": "30807e5abb23f625181b7a97ff44ca61",
     "packages": [
         {
             "name": "psr/log",
@@ -285,16 +285,16 @@
         },
         {
             "name": "overtrue/phplint",
-            "version": "5.0.0",
+            "version": "5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/overtrue/phplint.git",
-                "reference": "83d68ba6cfa925de9dc6e7a88ea6afdf1030acb3"
+                "reference": "a9730575eb1fd855cae4c3ea25b7b83877447042"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/overtrue/phplint/zipball/83d68ba6cfa925de9dc6e7a88ea6afdf1030acb3",
-                "reference": "83d68ba6cfa925de9dc6e7a88ea6afdf1030acb3",
+                "url": "https://api.github.com/repos/overtrue/phplint/zipball/a9730575eb1fd855cae4c3ea25b7b83877447042",
+                "reference": "a9730575eb1fd855cae4c3ea25b7b83877447042",
                 "shasum": ""
             },
             "require": {
@@ -348,7 +348,7 @@
             ],
             "support": {
                 "issues": "https://github.com/overtrue/phplint/issues",
-                "source": "https://github.com/overtrue/phplint/tree/5.0.0"
+                "source": "https://github.com/overtrue/phplint/tree/5.1.0"
             },
             "funding": [
                 {
@@ -356,7 +356,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-04-06T06:22:03+00:00"
+            "time": "2022-04-19T03:40:18+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -698,16 +698,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.5.6",
+            "version": "1.5.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "799dd8c2d2c9c704bb55d2078078cb970cf0f6d1"
+                "reference": "7fb7e2e1e9f3d59a26a413b2d3d5e47f0edb75ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/799dd8c2d2c9c704bb55d2078078cb970cf0f6d1",
-                "reference": "799dd8c2d2c9c704bb55d2078078cb970cf0f6d1",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7fb7e2e1e9f3d59a26a413b2d3d5e47f0edb75ac",
+                "reference": "7fb7e2e1e9f3d59a26a413b2d3d5e47f0edb75ac",
                 "shasum": ""
             },
             "require": {
@@ -733,7 +733,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.5.6"
+                "source": "https://github.com/phpstan/phpstan/tree/1.5.7"
             },
             "funding": [
                 {
@@ -753,7 +753,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-04-15T11:13:37+00:00"
+            "time": "2022-04-20T12:20:27+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
