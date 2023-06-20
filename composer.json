@@ -64,6 +64,6 @@
     "phpunit/phpunit": "10.2.2",
     "squizlabs/php_codesniffer": "3.7.2",
     "overtrue/phplint": "9.0.4",
-    "phpstan/phpstan": "1.10.19"
+    "phpstan/phpstan": "1.10.20"
   }
 }
