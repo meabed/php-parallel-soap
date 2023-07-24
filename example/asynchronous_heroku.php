@@ -63,7 +63,7 @@ catch (SoapFault $ex) {
     print 'SoapFault: ' . $ex->faultcode . ' - ' . $ex->getMessage() . "\n";
 } /** catch Exception if it happens */
 catch (Exception $e) {
-    print 'Exception: ' . $ex->faultcode . ' - ' . $ex->getMessage() . "\n";
+    print 'Exception: ' . $e->faultcode . ' - ' . $e->getMessage() . "\n";
 }
 
 /**
