@@ -3,6 +3,7 @@ name: CI7.4
 on:
   push:
     paths:
+      - '.github/workflows/ci7.4.yml'
       - 'src/**'
       - 'tests/**'
       - 'example/**'

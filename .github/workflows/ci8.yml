@@ -3,6 +3,7 @@ name: CI8
 on:
   push:
     paths:
+      - '.github/workflows/ci8.yml'
       - 'src/**'
       - 'tests/**'
       - 'example/**'
