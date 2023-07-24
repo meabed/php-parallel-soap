@@ -31,8 +31,8 @@ jobs:
       - name: Install dependencies
         run: composer update --prefer-stable --prefer-dist --no-interaction --no-suggest --ignore-platform-reqs
 
-      - name: Install PHP7.3 dependencies
-        run: composer require phpunit/phpunit:^8
+      - name: Install PHP7.4 dependencies
+        run: composer require phpunit/phpunit:^8 psr/log:^1
 
       - name: Test
         run: |

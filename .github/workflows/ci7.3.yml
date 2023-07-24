@@ -32,7 +32,7 @@ jobs:
         run: composer update --prefer-stable --prefer-dist --no-interaction --no-suggest --ignore-platform-reqs
 
       - name: Install PHP7.3 dependencies
-        run: composer require phpunit/phpunit:^8
+        run: composer require phpunit/phpunit:^8 psr/log:^1
 
       - name: Test
         run: |

@@ -58,7 +58,7 @@
     "php": ">=7.2",
     "ext-soap": "*",
     "ext-curl": "*",
-    "psr/log": "~3.0"
+    "psr/log": "^3.0"
   },
   "require-dev": {
     "phpunit/phpunit": "10.2.6",
