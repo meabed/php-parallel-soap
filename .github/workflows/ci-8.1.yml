@@ -1,4 +1,4 @@
-name: CI8.1
+name: CI-8.1
 
 on:
   push:
@@ -16,7 +16,7 @@ on:
       - 'master'
 
 jobs:
-  build-test:
+  CI:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
