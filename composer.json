@@ -1,6 +1,6 @@
 {
   "name": "meabed/php-parallel-soap",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Multi curl SoapClient that allow to perform multiple requests to SoapServer",
   "keywords": [
     "Soap",
