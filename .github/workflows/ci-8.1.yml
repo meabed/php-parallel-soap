@@ -1,9 +1,9 @@
-name: CI7.3
+name: CI8.1
 
 on:
   push:
     paths:
-      - '.github/workflows/ci7.3.yml'
+      - '.github/workflows/ci-8.1.yml'
       - 'src/**'
       - 'tests/**'
       - 'example/**'
@@ -24,18 +24,14 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.3
+          php-version: 8.1
           extensions: posix, dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
           coverage: xdebug
 
       - name: Install dependencies
         run: composer update --prefer-stable --prefer-dist --no-interaction --no-suggest --ignore-platform-reqs
 
-      - name: Install PHP7.3 dependencies
-        run: |
-            composer require psr/log:^1 --ignore-platform-reqs --with-all-dependencies
-            composer require --dev phpunit/phpunit:^8 --ignore-platform-reqs --with-all-dependencies
-
       - name: Test
         run: |
           composer check-style && composer test-cov
+

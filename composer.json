@@ -55,7 +55,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=7.2",
+    "php": ">=8",
     "ext-soap": "*",
     "ext-curl": "*",
     "psr/log": "^3.0"
