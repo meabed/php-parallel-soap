@@ -25,11 +25,14 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 7.3
-          extensions: posix, dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, xdebug
-          coverage: none
+          extensions: posix, dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+          coverage: xdebug
 
       - name: Install dependencies
         run: composer update --prefer-stable --prefer-dist --no-interaction --no-suggest --ignore-platform-reqs
+
+      - name: Install PHP7.3 dependencies
+        run: composer install phpunit/phpunit:^8
 
       - name: Test
         run: |
