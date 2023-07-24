@@ -83,7 +83,7 @@ build:
     postgresql: false
     redis: false
     php:
-      version: 7.2
+      version: 8.2
   tests:
     override:
     - php-scrutinizer-run

@@ -1,8 +1,9 @@
-name: CI7.4
+name: CI-8.1
 
 on:
   push:
     paths:
+      - '.github/workflows/ci-8.1.yml'
       - 'src/**'
       - 'tests/**'
       - 'example/**'
@@ -15,7 +16,7 @@ on:
       - 'master'
 
 jobs:
-  build-test:
+  CI:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,9 +24,9 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.1
           extensions: posix, dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
-          coverage: none
+          coverage: xdebug
 
       - name: Install dependencies
         run: composer update --prefer-stable --prefer-dist --no-interaction --no-suggest --ignore-platform-reqs

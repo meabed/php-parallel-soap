@@ -18,6 +18,7 @@ use Psr\Log\NullLogger;
 class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+
     /** @var array of all responses in the client */
     public $soapResponses = [];
 
@@ -230,13 +231,13 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
         // format xml before logging
         $formatXmlFn = $options['formatXmlFn'] ?? static function ($xml) {
-                return $xml;
+            return $xml;
         };
         $this->setFormatXmlFn($formatXmlFn);
 
         // result parsing function
         $resFn = $options['resFn'] ?? static function ($method, $res) {
-                return $res;
+            return $res;
         };
         $this->setResFn($resFn);
 
@@ -244,9 +245,9 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
         // Ex: SOAPAction: "http://tempuri.org/SOAP.Demo.AddInteger"
         // Ex: SOAPAction: "http://webservices.amadeus.com/PNRRET_11_3_1A"
         $soapActionFn = $options['soapActionFn'] ?? static function ($action, $headers) {
-                $headers[] = 'SOAPAction: "' . $action . '"';
-                // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
-                return $headers;
+            $headers[] = 'SOAPAction: "' . $action . '"';
+            // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
+            return $headers;
         };
         $this->setSoapActionFn($soapActionFn);
 
@@ -335,14 +336,18 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * Call Sync method, act like normal soap method with extra implementation if needed
      *
      * @param string $method
-     * @param array  $args
+     * @param array $args
      *
-     * @throws \Exception|\SoapFault
      * @return string|mixed
+     * @throws \Exception|\SoapFault
      */
     public function callOne(string $method, array $args)
     {
-        parent::__call($method, $args);
+        if (version_compare(PHP_VERSION, '8.0.0', '>=')) {
+            parent::__soapCall($method, $args);
+        } else {
+            parent::__call($method, $args);
+        }
         /** parse the xml response or throw an exception */
         $this->xmlResponse = $this->run([$this->lastRequestId]);
         return $this->getResponseResult($method, $args);
@@ -352,7 +357,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * Call Parallel method, suppress exception and convert to string
      *
      * @param string $method
-     * @param array  $args
+     * @param array $args
      *
      * @return string|mixed
      */
@@ -360,7 +365,11 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     {
         /** generate curl session and add the soap requests to execute it later  */
         try {
-            parent::__call($method, $args);
+            if (version_compare(PHP_VERSION, '8.0.0', '>=')) {
+                parent::__soapCall($method, $args);
+            } else {
+                parent::__call($method, $args);
+            }
             /**
              * Return the Request ID to the calling method
              * This next 2 lines should be custom implementation based on your solution.
@@ -376,6 +385,31 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
         }
 
         return $res;
+    }
+
+    /**
+     * __soapCall Magic method to allow one and Parallel Soap calls with exception handling
+     *
+     *
+     * @param $name
+     * @param array $args
+     * @param null $options
+     * @param null $inputHeaders
+     * @param null &$outputHeaders
+     * @return string|mixed
+     * @throws \Exception
+     * @throws \SoapFault
+     */
+    public function __soapCall($name, array $args, $options = null, $inputHeaders = null, &$outputHeaders = null): mixed
+    {
+        /** set current action to the current method call */
+        $this->soapMethod = $name;
+
+        if (!$this->multi) {
+            return $this->callOne($name, $args);
+        }
+
+        return $this->callMulti($name, $args);
     }
 
     /**
@@ -525,7 +559,11 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
                 if ($ch instanceof \Exception) {
                     throw $ch;
                 }
-                $res = parent::__call($this->soapMethodArr[$id], []);
+                if (version_compare(PHP_VERSION, '8.0.0', '>=')) {
+                    $res = parent::__soapCall($this->soapMethodArr[$id], []);
+                } else {
+                    $res = parent::__call($this->soapMethodArr[$id], []);
+                }
                 /**
                  * Return the Request ID to the calling method
                  * This next lines should be custom implementation based on your solution.
@@ -563,8 +601,11 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
         $this->soapMethod = static::GET_RESPONSE_CONST;
 
         try {
-            $res = parent::__call($method, $args);
-
+            if (version_compare(PHP_VERSION, '8.0.0', '>=')) {
+                $res = parent::__soapCall($method, $args);
+            } else {
+                $res = parent::__call($method, $args);
+            }
             $id = $this->lastRequestId;
             $this->addDebugData($res, $id);
         } catch (\Exception $ex) {
@@ -586,10 +627,10 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * @param $res
      * @param $id
      *
-     * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
      * @return mixed
+     * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
      */
-    public function addDebugData($res, $id) : mixed
+    public function addDebugData($res, $id): mixed
     {
         $fn = $this->debugFn;
         return $fn($res, $id);
@@ -600,10 +641,10 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      *
      * @param $request
      *
-     * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
      * @return mixed
+     * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
      */
-    public function formatXml($request) : mixed
+    public function formatXml($request): mixed
     {
         $fn = $this->formatXmlFn;
         return $fn($request);

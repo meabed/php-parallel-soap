@@ -1,8 +1,9 @@
-name: CI8
+name: CI-8.0
 
 on:
   push:
     paths:
+      - '.github/workflows/ci-8.0.yml'
       - 'src/**'
       - 'tests/**'
       - 'example/**'
@@ -15,7 +16,7 @@ on:
       - 'master'
 
 jobs:
-  build-test:
+  CI:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -25,7 +26,7 @@ jobs:
         with:
           php-version: 8.0
           extensions: posix, dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
-          coverage: none
+          coverage: xdebug
 
       - name: Install dependencies
         run: composer update --prefer-stable --prefer-dist --no-interaction --no-suggest --ignore-platform-reqs
@@ -33,26 +34,3 @@ jobs:
       - name: Test
         run: |
           composer check-style && composer test-cov
-
-# cache:
-#  directories:
-#    - $HOME/.composer/cache
-#
-#before_script:
-#  - composer self-update
-#  - travis_retry composer install-dev
-#
-#script:
-#  - composer check-style
-#  # - composer stan todo
-#  - composer test-cov
-#
-#after_script:
-#  - |
-#    if [[ "$TRAVIS_PHP_VERSION" != 'hhvm' && "$TRAVIS_PHP_VERSION" != '7.0' ]]; then
-#      wget https://scrutinizer-ci.com/ocular.phar
-#      php ocular.phar code-coverage:upload --format=php-clover coverage.xml
-#    fi
-#
-#after_success:
-#  - bash <(curl -s https://codecov.io/bash)
