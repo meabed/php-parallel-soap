@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "57f0b5c27bd2fa619a7a4d13b80e0e5e",
+    "content-hash": "6b355a58f37967ebbe95f7ce368667e8",
     "packages": [
         {
             "name": "psr/log",
@@ -177,16 +177,16 @@
         },
         {
             "name": "overtrue/phplint",
-            "version": "9.2.0",
+            "version": "9.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/overtrue/phplint.git",
-                "reference": "b211fe17b8b9e8f2b3db10243f6adcb6397715c3"
+                "reference": "9cba6a16eb2cee04af67f852b80e914c549d1e73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/overtrue/phplint/zipball/b211fe17b8b9e8f2b3db10243f6adcb6397715c3",
-                "reference": "b211fe17b8b9e8f2b3db10243f6adcb6397715c3",
+                "url": "https://api.github.com/repos/overtrue/phplint/zipball/9cba6a16eb2cee04af67f852b80e914c549d1e73",
+                "reference": "9cba6a16eb2cee04af67f852b80e914c549d1e73",
                 "shasum": ""
             },
             "require": {
@@ -229,7 +229,7 @@
                     ]
                 },
                 "branch-alias": {
-                    "dev-main": "9.2.x-dev"
+                    "dev-main": "9.3.x-dev"
                 }
             },
             "autoload": {
@@ -261,7 +261,7 @@
             ],
             "support": {
                 "issues": "https://github.com/overtrue/phplint/issues",
-                "source": "https://github.com/overtrue/phplint/tree/9.2.0"
+                "source": "https://github.com/overtrue/phplint/tree/9.3.0"
             },
             "funding": [
                 {
@@ -269,7 +269,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-05-03T07:14:21+00:00"
+            "time": "2024-05-16T06:42:55+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -391,16 +391,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.11.0",
+            "version": "1.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "666cb1703742cea9cc80fee631f0940e1592fa6e"
+                "reference": "e524358f930e41a2b4cca1320e3b04fc26b39e0b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/666cb1703742cea9cc80fee631f0940e1592fa6e",
-                "reference": "666cb1703742cea9cc80fee631f0940e1592fa6e",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e524358f930e41a2b4cca1320e3b04fc26b39e0b",
+                "reference": "e524358f930e41a2b4cca1320e3b04fc26b39e0b",
                 "shasum": ""
             },
             "require": {
@@ -445,7 +445,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-05-13T06:02:22+00:00"
+            "time": "2024-05-15T08:00:59+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
