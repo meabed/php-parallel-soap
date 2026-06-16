@@ -265,10 +265,11 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * @param string $action The SOAP action
      * @param int $version The SOAP version
      * @param bool $oneWay If one_way is set to 1, this method returns nothing. Use this where a response is not expected
+     * @param string|null $uriParserClass The URI parser class added by PHP 8.5; unused here, kept for signature compatibility
      *
      * @return string
      */
-    public function __doRequest(string $request, string $location, string $action, int $version, bool $oneWay = false): ?string
+    public function __doRequest(string $request, string $location, string $action, int $version, bool $oneWay = false, ?string $uriParserClass = null): ?string
     {
         $shouldGetResponse = ($this->soapMethod == static::GET_RESPONSE_CONST);
 
