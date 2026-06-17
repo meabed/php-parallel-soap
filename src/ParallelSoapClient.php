@@ -7,13 +7,14 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
 /**
- * Single/Parallel Soap Class
+ * Single / Parallel SOAP client.
  *
- * Implements soap with multi server-to-server calls using curl module.
+ * A drop-in replacement for the native SoapClient that performs requests over curl,
+ * with support for firing many calls in parallel via curl_multi.
  *
  * @author Mohamed Meabed <mo.meabed@gmail.com>
- * @link   https://github.com/Meabed/php-parallel-soap
- * @note   Check the Example files and read the documentation carefully
+ * @link   https://github.com/meabed/php-parallel-soap
+ * @note   Check the example/ files and read the documentation carefully
  */
 class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 {
@@ -220,6 +221,9 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
     public function __construct($wsdl, ?array $options = null)
     {
+        // SoapClient::__construct() requires an array; normalise null to an empty array.
+        $options = $options ?? [];
+
         // logger
         $logger = $options['logger'] ?? new NullLogger();
         $this->setLogger($logger);
@@ -250,6 +254,19 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
             return $headers;
         };
         $this->setSoapActionFn($soapActionFn);
+
+        // Map the native SoapClient proxy options onto curl so they apply to the curl-based
+        // requests too. They can still be overridden via setCurlOptions().
+        if (!empty($options['proxy_host'])) {
+            $this->curlOptions[CURLOPT_PROXY] = $options['proxy_host'];
+            if (!empty($options['proxy_port'])) {
+                $this->curlOptions[CURLOPT_PROXYPORT] = $options['proxy_port'];
+            }
+            if (!empty($options['proxy_login'])) {
+                $this->curlOptions[CURLOPT_PROXYUSERPWD] =
+                    $options['proxy_login'] . ':' . ($options['proxy_password'] ?? '');
+            }
+        }
 
         // cleanup
         unset($options['logger'], $options['debugFn'], $options['resFn'], $options['soapActionFn']);
@@ -473,18 +490,19 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
             curl_multi_add_handle($mh, $ch);
         }
 
+        // Execute the handles, blocking on curl_multi_select() between rounds so the loop
+        // does not busy-wait and peg the CPU at 100% while the endpoints respond.
         $active = null;
         do {
             $mrc = curl_multi_exec($mh, $active);
-        } while ($mrc === CURLM_CALL_MULTI_PERFORM || $active);
-
-        while ($active && $mrc == CURLM_OK) {
-            if (curl_multi_select($mh) != -1) {
-                do {
-                    $mrc = curl_multi_exec($mh, $active);
-                } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+            if ($active) {
+                // Wait (up to 1s) for activity on any handle. curl_multi_select() can return
+                // -1 on some platforms; fall back to a short sleep to avoid a tight loop.
+                if (curl_multi_select($mh, 1.0) === -1) {
+                    usleep(1000);
+                }
             }
-        }
+        } while ($active && $mrc === CURLM_OK);
 
         /** assign the responses for all requests has been performed */
         foreach ($soapRequests as $id => $ch) {
@@ -645,7 +663,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * @param $id
      *
      * @return mixed
-     * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
+     * @author Mohamed Meabed <mo.meabed@gmail.com>
      */
     public function addDebugData($res, $id): mixed
     {
@@ -659,7 +677,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * @param $request
      *
      * @return mixed
-     * @author Mohamed Meabed <mohamed.meabed@tajawal.com>
+     * @author Mohamed Meabed <mo.meabed@gmail.com>
      */
     public function formatXml($request): mixed
     {
