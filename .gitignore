@@ -92,6 +92,7 @@ testem.log
 .DS_Store
 Thumbs.db
 .phplint-cache
+.phplint.cache
 coverage.xml
 coverage.clover
 /report
