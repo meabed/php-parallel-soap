@@ -1,13 +1,18 @@
 {
   "name": "meabed/php-parallel-soap",
-  "version": "3.0.1",
-  "description": "Multi curl SoapClient that allow to perform multiple requests to SoapServer",
+  "description": "Parallel, multi-curl PHP SoapClient that performs many SOAP requests concurrently",
   "keywords": [
-    "Soap",
-    "Curl",
+    "soap",
+    "soap-client",
+    "curl",
+    "curl-multi",
     "multicurl",
     "parallel",
-    "Asynchronous"
+    "concurrent",
+    "asynchronous",
+    "async",
+    "wsdl",
+    "php8"
   ],
   "homepage": "https://github.com/meabed/php-parallel-soap",
   "license": "MIT",
@@ -18,10 +23,18 @@
     "install-dev": "composer install --no-interaction",
     "install-prod": "composer install --no-dev --no-interaction",
     "lint": "phplint",
-    "stan": "phpstan analyse src",
+    "stan": "phpstan analyse",
     "test": "phpunit",
     "test-cov": "phpunit --coverage-text --coverage-clover=coverage.xml",
     "test-html": "phpunit --coverage-text --coverage-clover=coverage.xml --coverage-html=./report/",
+    "ci": [
+      "@lint",
+      "@check-style",
+      "@stan",
+      "@test"
+    ],
+    "dev-server": "php -S 127.0.0.1:8999 tests/Fixtures/http-server.php",
+    "test-external": "phpunit --group external",
     "update-dev": "composer update",
     "update-prod": "composer update --no-dev"
   },
@@ -39,7 +52,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Soap\\": "src/"
+      "Meabed\\ParallelSoap\\": "src/"
     }
   },
   "autoload-dev": {
@@ -49,21 +62,22 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "3.0.x-dev"
+      "dev-master": "4.0.x-dev"
     }
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=8",
+    "php": ">=8.0",
     "ext-soap": "*",
     "ext-curl": "*",
-    "psr/log": "~1.1|~2.0|~3.0"
+    "ext-libxml": "*",
+    "psr/log": "~1.1 || ~2.0 || ~3.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "~9|~10",
-    "squizlabs/php_codesniffer": "3.13.2",
-    "overtrue/phplint": "9.6.2",
-    "phpstan/phpstan": "1.12.28"
+    "phpunit/phpunit": "^10.5 || ^11.5 || ^12.0 || ^13.0",
+    "squizlabs/php_codesniffer": "^3.13",
+    "overtrue/phplint": "^9.6",
+    "phpstan/phpstan": "^2.1"
   }
 }

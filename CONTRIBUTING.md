@@ -31,18 +31,26 @@ Make sure each individual commit in your pull request is meaningful. If you had 
 
 When contributing to open source project it is polite to follow the original authors coding standars. They might be different than yours. It is not a holy war. This project uses **[PSR-2 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)**
 
-## Running Tests
+## Running tests
 
-You can run individual tests either manually...
+Install the dependencies and run the checks:
 
-``` bash
-$ composer phplint
-$ composer phpcs
-$ composer phpunit
+```bash
+composer install
+
+composer lint          # PHP syntax lint
+composer check-style   # PSR-2 coding standard
+composer stan          # PHPStan static analysis
+composer test          # hermetic test suite (no network required)
+composer ci            # all of the above
 ```
 
-... or automatically on every code change. You will need [entr](http://entrproject.org/) for this to work.
+The default test run is fully **hermetic** — it starts a local SOAP server (over HTTP and
+TLS) and needs no internet access. The external integration tests that hit public demo
+services are opt-in:
 
-``` bash
-$ composer watch
+```bash
+vendor/bin/phpunit --group external
 ```
+
+Please make sure `composer ci` passes before opening a pull request.

@@ -3,28 +3,37 @@
 namespace Tests\Base;
 
 use PHPUnit\Framework\TestCase;
-use Soap\ParallelSoapClient;
+use Meabed\ParallelSoap\ParallelSoapClient;
+use Tests\Support\RemoteHost;
 
-class BaseCrcindCase extends TestCase
+/**
+ * Integration tests against the public crcind.com demo SOAP service.
+ *
+ * These tests hit a third-party host, so the concrete subclasses are tagged with
+ * the #[Group('external')] attribute and they skip automatically when the host is
+ * unreachable.
+ */
+abstract class BaseCrcindCase extends TestCase
 {
-    /** @var \Soap\ParallelSoapClient */
-    public $parallelSoapClient;
+    protected const HOST = 'www.crcind.com';
+    protected const WSDL = 'http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL';
 
-    /**
-     * @throws \SoapFault
-     */
-    public function __construct($name = null, array $data = [], $dataName = '')
+    protected ParallelSoapClient $parallelSoapClient;
+
+    protected function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        if (!RemoteHost::isReachable(self::HOST)) {
+            $this->markTestSkipped(self::HOST . ' is not reachable; skipping external test.');
+        }
 
-        // parse response function
+        // Bound the WSDL fetch so a misbehaving host fails fast instead of hanging.
+        ini_set('default_socket_timeout', '10');
+
         $soapActionFn = static function ($action, $headers) {
             $headers[] = 'SOAPAction: "' . $action . '"';
-            // 'SOAPAction: "' . $soapAction . '"', pass the soap action in every request from the WSDL if required
             return $headers;
         };
 
-        // parse response function
         $parseResultFn = static function ($method, $res) {
             if (isset($res->{$method . 'Result'})) {
                 return $res->{$method . 'Result'};
@@ -41,13 +50,8 @@ class BaseCrcindCase extends TestCase
             return $dom->saveXml();
         };
 
-
-        // @link http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
-        /** @var $wsdl , This is the test server i have generated to test the class */
-        $wsdl = "http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL";
-        /** @var $options , array of options for the soap client */
         $options = [
-            'connection_timeout' => 40,
+            'connection_timeout' => 15,
             'trace' => true,
             'exceptions' => true,
             'soap_version' => SOAP_1_1,
@@ -58,9 +62,8 @@ class BaseCrcindCase extends TestCase
             'formatXmlFn' => $formatXmlFn,
         ];
 
-        /** @var \Soap\ParallelSoapClient $client New Soap client instance */
-        $this->parallelSoapClient = new ParallelSoapClient($wsdl, $options);
-        $this->parallelSoapClient->setLogSoapRequest(1);
+        $this->parallelSoapClient = new ParallelSoapClient(self::WSDL, $options);
+        $this->parallelSoapClient->setLogSoapRequest(true);
         $this->parallelSoapClient->setLogger(new StdoutLogger());
     }
 }
