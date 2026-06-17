@@ -207,6 +207,14 @@ Contributions are welcome — please review the [guidelines](CONTRIBUTING.md):
 
 See [CHANGELOG.md](CHANGELOG.md) for a list of notable changes.
 
+## Acknowledgements
+
+Thanks to everyone who has reported issues and contributed fixes, including
+[@c266](https://github.com/c266) for independently diagnosing the PHP 8.5 `__doRequest()`
+signature break ([#180](https://github.com/meabed/php-parallel-soap/pull/180), [#179]).
+
+[#179]: https://github.com/meabed/php-parallel-soap/issues/179
+
 ## License
 
 Released under the [MIT license](LICENSE.md).

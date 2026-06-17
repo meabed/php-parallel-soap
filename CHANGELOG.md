@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **PHP 8.4 / 8.5 fatal error.** `SoapClient::__doRequest()` gained a 6th parameter
   (`?string $uriParserClass`); the incompatible override made the class fatal to autoload.
-  The override now matches the parent signature. ([#179])
+  The override now matches the parent signature. ([#179], thanks [@c266] for [#180])
 - **High CPU load in parallel mode.** `doRequests()` busy-waited on `curl_multi_exec()` and
   pegged the CPU at 100% while endpoints responded. It now blocks on `curl_multi_select()`
   between rounds. ([#47])
@@ -57,4 +57,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#175]: https://github.com/meabed/php-parallel-soap/issues/175
 [#47]: https://github.com/meabed/php-parallel-soap/issues/47
 [#11]: https://github.com/meabed/php-parallel-soap/issues/11
+[#180]: https://github.com/meabed/php-parallel-soap/pull/180
+[@c266]: https://github.com/c266
 [4.0.0]: https://github.com/meabed/php-parallel-soap/compare/3.0.1...4.0.0
