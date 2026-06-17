@@ -53,37 +53,33 @@ checks:
     parameters_in_camelcaps: true
 
 tools:
-  external_code_coverage:
-    timeout: 600
   php_mess_detector: true
   php_code_sniffer: true
-  sensiolabs_security_checker: true
   php_pdepend: true
   php_loc:
     enabled: true
     excluded_dirs:
-    - examples
+    - example
     - tests
     - vendor
   php_cpd:
     enabled: true
     excluded_dirs:
-    - examples
+    - example
     - tests
     - vendor
 
 build:
   dependencies:
-      override:
-        - sudo composer selfupdate
-        - make deps-install-dev
+    override:
+      - composer update --no-interaction --prefer-dist
   environment:
     timezone: UTC
     mysql: false
     postgresql: false
     redis: false
     php:
-      version: 8.2
+      version: 8.3
   tests:
     override:
     - php-scrutinizer-run

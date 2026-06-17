@@ -53,6 +53,10 @@ options (such as TLS session sharing and connection reuse).
 
 The library is tested in CI against PHP **8.1, 8.2, 8.3, 8.4 and 8.5** (including a TLS suite).
 
+> **Upgrading?** Versions before this release fatal-error on PHP 8.4/8.5 (the native
+> `SoapClient::__doRequest()` signature changed). Make sure you are on the latest release on
+> those PHP versions. See the [CHANGELOG](CHANGELOG.md).
+
 ## Installation
 
 ```bash
@@ -190,6 +194,10 @@ Contributions are welcome — please review the [guidelines](CONTRIBUTING.md):
 - [One feature or change per pull request](CONTRIBUTING.md#only-one-feature-or-change-per-pull-request)
 - [Write meaningful commit messages](CONTRIBUTING.md#write-meaningful-commit-messages)
 - [Follow the existing coding standards](CONTRIBUTING.md#follow-the-existing-coding-standards)
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a list of notable changes.
 
 ## License
 
