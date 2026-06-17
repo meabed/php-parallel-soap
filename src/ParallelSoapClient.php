@@ -218,7 +218,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     }
 
 
-    public function __construct($wsdl, array $options = null)
+    public function __construct($wsdl, ?array $options = null)
     {
         // logger
         $logger = $options['logger'] ?? new NullLogger();
@@ -265,11 +265,18 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * @param string $action The SOAP action
      * @param int $version The SOAP version
      * @param bool $oneWay If one_way is set to 1, this method returns nothing. Use this where a response is not expected
+     * @param string|null $uriParserClass URI parser class added by SoapClient in PHP 8.4+; kept for signature compatibility
      *
-     * @return string
+     * @return string|null
      */
-    public function __doRequest(string $request, string $location, string $action, int $version, bool $oneWay = false): ?string
-    {
+    public function __doRequest(
+        string $request,
+        string $location,
+        string $action,
+        int $version,
+        bool $oneWay = false,
+        ?string $uriParserClass = null
+    ): ?string {
         $shouldGetResponse = ($this->soapMethod == static::GET_RESPONSE_CONST);
 
         // print xml for debugging testing
@@ -286,10 +293,10 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
 
         $soapRequests = &$this->soapRequests;
 
-        /** @var string $id represent hashId of each request based on the request body to avoid multiple calls for the same request if exists */
+        // hashId of each request based on the request body to avoid duplicate calls for the same request
         $id = sha1($location . $request);
 
-        /** @var $headers array of headers to be sent with request */
+        // array of headers to be sent with the request
         $this->defaultHeaders['Content-length'] = "Content-length: " . strlen($request);
 
         // pass the soap action in every request from the WSDL if required
@@ -371,11 +378,12 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
                 parent::__call($method, $args);
             }
             /**
-             * Return the Request ID to the calling method
-             * This next 2 lines should be custom implementation based on your solution.
+             * Return the Request ID to the calling method.
+             * These next lines should be a custom implementation based on your solution.
              *
-             * @var $res string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
-             * to be able to get the response with it
+             * On multiple calls we simulate the response from the Soap API and return the
+             * request id of each call so the response can be fetched with it later.
+             *
              * @note check the example file to understand what to write here
              */
             $res = $this->lastRequestId;
@@ -388,20 +396,27 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     }
 
     /**
-     * __soapCall Magic method to allow one and Parallel Soap calls with exception handling
+     * __soapCall Magic method to allow one and Parallel Soap calls with exception handling.
      *
+     * The signature mirrors SoapClient::__soapCall() so the override stays compatible
+     * across PHP versions.
      *
-     * @param $name
+     * @param string $name
      * @param array $args
-     * @param null $options
-     * @param null $inputHeaders
-     * @param null &$outputHeaders
+     * @param array|null $options
+     * @param mixed $inputHeaders
+     * @param mixed $outputHeaders
      * @return string|mixed
      * @throws \Exception
      * @throws \SoapFault
      */
-    public function __soapCall($name, array $args, $options = null, $inputHeaders = null, &$outputHeaders = null): mixed
-    {
+    public function __soapCall(
+        string $name,
+        array $args,
+        ?array $options = null,
+        mixed $inputHeaders = null,
+        mixed &$outputHeaders = null
+    ): mixed {
         /** set current action to the current method call */
         $this->soapMethod = $name;
 
@@ -489,7 +504,8 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
                 $soapResponses[$id] = $e;
             }
             curl_multi_remove_handle($mh, $ch);
-            curl_close($ch);
+            // curl_close() is a no-op since PHP 8.0 and deprecated since PHP 8.5; the CurlHandle is
+            // released automatically by the garbage collector once the last reference is gone.
         }
         curl_multi_close($mh);
 
@@ -513,7 +529,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
     {
         $partial = false;
 
-        if (is_array($requestIds) && count($requestIds)) {
+        if (count($requestIds)) {
             $partial = true;
         }
         $allSoapResponses = &$this->soapResponses;
@@ -565,11 +581,12 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
                     $res = parent::__call($this->soapMethodArr[$id], []);
                 }
                 /**
-                 * Return the Request ID to the calling method
-                 * This next lines should be custom implementation based on your solution.
+                 * Return the Request ID to the calling method.
+                 * These next lines should be a custom implementation based on your solution.
                  *
-                 * @var $resArr string ,On multiple calls Simulate the response from Soap API to return the request Id of each call
-                 * to be able to get the response with it
+                 * On multiple calls we simulate the response from the Soap API and return the
+                 * request id of each call so the response can be fetched with it later.
+                 *
                  * @note check the example file to understand what to write here
                  */
                 $resFn = $this->resFn;
@@ -594,7 +611,7 @@ class ParallelSoapClient extends \SoapClient implements LoggerAwareInterface
      * @param string|array $args
      *
      * @return string $res
-     * @throws \Exception|\SoapFault|
+     * @throws \Exception|\SoapFault
      */
     public function getResponseResult(string $method, $args): string
     {
