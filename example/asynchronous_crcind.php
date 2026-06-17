@@ -1,14 +1,14 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Soap\ParallelSoapClient;
+
 /**
- * The test soap Server is Located @ http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
+ * Live demo against the public crcind.com sample SOAP service:
+ * http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL
  */
 
-/** the main soap class */
-require_once(__DIR__ . '/../src/ParallelSoapClient.php');
-
-/** @var string $wsdl , This is the test server i have generated to test the class */
+/** @var string $wsdl Public demo SOAP service used to exercise the client. */
 $wsdl = "http://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL";
 // parse response function
 $parseResultFn = function ($method, $res) {
@@ -28,8 +28,8 @@ $options = [
     'resFn' => $parseResultFn,
 ];
 
-/** @var \Soap\ParallelSoapClient $client New Soap client instance */
-$client = new \Soap\ParallelSoapClient($wsdl, $options);
+/** @var ParallelSoapClient $client New Soap client instance */
+$client = new ParallelSoapClient($wsdl, $options);
 $client->setCurlOptions(
     [CURLOPT_VERBOSE => false]
 );
@@ -56,7 +56,7 @@ catch (SoapFault $ex) {
     print 'SoapFault: ' . $ex->faultcode . ' - ' . $ex->getMessage() . "\n";
 } /** catch Exception if it happens */
 catch (Exception $e) {
-    print 'Exception: ' . $ex->faultcode . ' - ' . $ex->getMessage() . "\n";
+    print 'Exception: ' . $e->getCode() . ' - ' . $e->getMessage() . "\n";
 }
 
 /**

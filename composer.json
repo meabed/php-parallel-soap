@@ -2,11 +2,17 @@
   "name": "meabed/php-parallel-soap",
   "description": "Parallel, multi-curl PHP SoapClient that performs many SOAP requests concurrently",
   "keywords": [
-    "Soap",
-    "Curl",
+    "soap",
+    "soap-client",
+    "curl",
+    "curl-multi",
     "multicurl",
     "parallel",
-    "Asynchronous"
+    "concurrent",
+    "asynchronous",
+    "async",
+    "wsdl",
+    "php8"
   ],
   "homepage": "https://github.com/meabed/php-parallel-soap",
   "license": "MIT",
