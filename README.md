@@ -1,77 +1,196 @@
+<h1 align="center">Parallel, Multi-Curl PHP SoapClient</h1>
+
 <p align="center">
-  <h3 align="center"> Parallel, Multi-Curl PHP SoapClient </h3>
-  <p align="center">
-    <a href="https://travis-ci.org/meabed/php-parallel-soap">
-      <img src="https://img.shields.io/travis/meabed/php-parallel-soap.svg?branch=master&style=flat-square" alt="Build Status">
-    </a>
-    <a href="LICENSE.md">
-      <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License">
-    </a>
-    <a class="badge-align" href="https://www.codacy.com/app/meabed/php-parallel-soap">
-      <img src="https://img.shields.io/codacy/grade/266923eec70e41418be8f981a5b4cefe.svg?style=flat-square"/>
-    </a>        
-    <a href="https://scrutinizer-ci.com/g/meabed/php-parallel-soap/?branch=master">
-      <img src="https://img.shields.io/scrutinizer/g/meabed/php-parallel-soap/master.svg?style=flat-square" alt="Scrutinizer Code Quality">
-    </a>
-    <a href="https://codecov.io/gh/meabed/php-parallel-soap">
-      <img src="https://img.shields.io/codecov/c/github/meabed/php-parallel-soap/master.svg?style=flat-square" alt="codecov">
-    </a>
-    <a href="https://packagist.org/packages/meabed/php-parallel-soap/">
-      <img src="https://img.shields.io/packagist/dm/meabed/php-parallel-soap.svg?style=flat-square" alt="Packagist">
-    </a>
-    <a href="https://www.paypal.me/meabed">
-      <img src="https://img.shields.io/badge/paypal-donate-179BD7.svg?style=flat-squares" alt="Donate">
-    </a>
-    <a href="https://meabed.com">
-      <img src="https://img.shields.io/badge/Author-blog-green.svg?style=flat-square" alt="Authoer Blog">
-    </a>
-  </p>
+  <a href="https://github.com/meabed/php-parallel-soap/actions/workflows/ci.yml">
+    <img src="https://github.com/meabed/php-parallel-soap/actions/workflows/ci.yml/badge.svg" alt="CI Status">
+  </a>
+  <a href="https://packagist.org/packages/meabed/php-parallel-soap">
+    <img src="https://img.shields.io/packagist/v/meabed/php-parallel-soap.svg?style=flat-square" alt="Latest Version">
+  </a>
+  <a href="https://packagist.org/packages/meabed/php-parallel-soap">
+    <img src="https://img.shields.io/packagist/php-v/meabed/php-parallel-soap.svg?style=flat-square" alt="PHP Version">
+  </a>
+  <a href="https://packagist.org/packages/meabed/php-parallel-soap">
+    <img src="https://img.shields.io/packagist/dm/meabed/php-parallel-soap.svg?style=flat-square" alt="Total Downloads">
+  </a>
+  <a href="LICENSE.md">
+    <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License">
+  </a>
 </p>
 
-Parallel Multi-Curl SoapClient that allow us to perform Parallel multiple requests to SoapServer using CURL.
+A drop-in replacement for PHP's native `SoapClient` that can fire **many SOAP requests in
+parallel** using curl's multi handle, while keeping the familiar synchronous SoapClient API
+when you need it.
 
-Working with soap is always frustrating for few reasons:
-- SOAP Messages are complicated and obscure
-- **Always slow Performance** as lack for connection pooling, ssl sharing, tcp tweaking options that comes with curl
-- Sequential Execution in array of multiple requests there no other way except looping and synchronously send request after another 
-- debugging with ability to understand how and what goes through the HTTP " Headers / Request Payload / Response Headers / Response Payload / Error structure etc..."  
+Working with SOAP is often painful:
 
-This Client will allow you send request in parallel, while give you ability to hook in the clinet "Logger / Result Function / Customer curl options like tcp connections reusing and ssl session sharing"  
+- SOAP messages are verbose and obscure.
+- Performance suffers because the native client has no connection pooling, TLS session
+  reuse, or low-level TCP tuning.
+- A list of calls can only be sent sequentially — you loop and wait for each response.
+- Debugging the underlying HTTP (headers / payloads / errors) is hard.
 
-See the [**Examples**](https://github.com/Meabed/php-parallel-soap/tree/master/example) to see how to use it.
+`ParallelSoapClient` lets you send requests concurrently and gives you hooks for a PSR-3
+logger, response parsing, custom `SOAPAction` headers, XML formatting and arbitrary curl
+options (such as TLS session sharing and connection reuse).
 
- Comment in the Example are written to help you understand how the client works and what you can do with it and how to customize it to fit your purpose!
+## Features
 
-Example [**WSDL**](https://soap-server-hello.herokuapp.com/wsdl.php)
+- **Single and parallel modes** — switch with `setMulti(true|false)`.
+- **True concurrency** via `curl_multi_exec` — consecutive calls no longer block each other.
+- **TLS / DNS / cookie session sharing** through a shared curl handle per endpoint.
+- **Per-request curl metadata** captured in `$client->curlInfo`.
+- **Deterministic request ids** — identical payloads hash to the same id, so duplicate calls
+  are sent only once.
+- **First-class exception handling** in both single and parallel modes.
+- **Pluggable hooks** — logger, result parser, `SOAPAction` builder, XML formatter, debug
+  callback.
 
-### Features
-- Client can work in parallel (multi) and Synchronous (single) mode.
-- Multiple calls using **curl_multi_exec**, Does not wait for soap consecutive calls ! This client will save a lot of time and resources doing multiple requests at same time!
-- **SSL / Session Sharing.**
-- __curl_info meta data in response object.
-- Each Request has **hash id** which is unique to each request ( If you execute the same request 100 times more, it will have the same hash ) so no duplicate requests
-- Very Easy to debug every single point during the request! also ability to use **CURL_VERBOSE** to debug the connections to the Soap Host
-- Very easy exception handling in **parallel** mode
+## Requirements
 
-### SOAP Facts
-- SOAP is HTTP Post with structured message in XML Envelope and SOAPAction Header.
-- SOAPAction header is used in web services for various reason, most common
-    - Route request to specific action
-    - Serve Multi-Version of service, if Action Method is part of the XML Envelope
-   
+- PHP **8.0+**
+- `ext-soap`, `ext-curl`, `ext-libxml`
 
-## Need Help?
-If you ever hated SOAP for complexity or performance and you cannot take it anymore, I could help! drop me a line here [meabed.com](http://meabed.com)
+The library is tested in CI against PHP **8.1, 8.2, 8.3, 8.4 and 8.5** (including a TLS suite).
 
+## Installation
+
+```bash
+composer require meabed/php-parallel-soap
+```
+
+## Usage
+
+### Synchronous (single) call
+
+Behaves exactly like the native `SoapClient`, but the transport is curl:
+
+```php
+use Soap\ParallelSoapClient;
+
+$client = new ParallelSoapClient($wsdl, [
+    'trace' => true,
+    'exceptions' => true,
+    'soap_version' => SOAP_1_1,
+    // Optional: unwrap the "<MethodResult>" envelope into a scalar value.
+    'resFn' => fn ($method, $res) => $res->{$method . 'Result'} ?? $res,
+]);
+
+$client->setMulti(false); // default
+
+$sum = $client->Add(['intA' => 4, 'intB' => 3]); // 7
+```
+
+### Parallel (multi) call
+
+Queue any number of calls, then execute them all at once with `run()`:
+
+```php
+$client->setMulti(true);
+$client->setCurlOptions([
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_SSL_VERIFYPEER => true,
+]);
+
+// Each call returns a request id instead of a result while in parallel mode.
+$id1 = $client->Add(['intA' => 4,  'intB' => 3]);
+$id2 = $client->Add(['intA' => 10, 'intB' => 20]);
+$id3 = $client->Add(['intA' => 10, 'intB' => 20]); // identical payload => same id as $id2
+
+// Fire every queued request concurrently. The client resets to single mode afterwards.
+$responses = $client->run();
+
+echo $responses[$id1]; // 7
+echo $responses[$id2]; // 30
+```
+
+### Handling errors in parallel mode
+
+In parallel mode exceptions are **not** thrown; instead each result is either the parsed
+response or a `SoapFault` object, so you inspect the result type:
+
+```php
+$responses = $client->run();
+
+foreach ($responses as $id => $response) {
+    if ($response instanceof SoapFault) {
+        // Network error, malformed response, server fault, ...
+        echo "Error for {$id}: {$response->getMessage()}\n";
+        continue;
+    }
+    echo "OK {$id}: {$response}\n";
+}
+```
+
+Calling a method that does not exist in the WSDL short-circuits before any HTTP request and
+returns a string prefixed with `ParallelSoapClient::ERROR_STR` (`*ERROR*`).
+
+### Running a subset of queued requests
+
+```php
+$responses = $client->run([$id1, $id3]); // only execute these two
+```
+
+## Configuration
+
+All hooks are passed through the constructor `$options` array (and are removed before being
+handed to the native `SoapClient`):
+
+| Option         | Type            | Purpose                                                                 |
+| -------------- | --------------- | ----------------------------------------------------------------------- |
+| `logger`       | `Psr\Log\LoggerInterface` | PSR-3 logger; defaults to `NullLogger`.                      |
+| `resFn`        | `callable($method, $res)` | Transform/unwrap each parsed response.                        |
+| `soapActionFn` | `callable($action, $headers)` | Build the outgoing `SOAPAction` header(s).               |
+| `formatXmlFn`  | `callable($xml)` | Format the request XML before it is logged.                            |
+| `debugFn`      | `callable($res, $id)` | Receive each response/exception for debugging or metadata capture. |
+
+Plus the runtime setters:
+
+- `setMulti(bool)` — toggle parallel mode.
+- `setCurlOptions(array)` — any `CURLOPT_*` options (TLS, timeouts, proxies, verbosity…).
+- `setLogSoapRequest(bool)` — log every request payload through the PSR-3 logger.
+
+See the [`example/`](example) directory for complete, runnable scripts.
+
+## How it works
+
+`__doRequest()` is overridden to build a curl handle per call instead of sending the request
+immediately. In parallel mode the handles are accumulated and executed together through
+`curl_multi_*`; the raw responses are then fed back through the native SOAP parser so you get
+ordinary PHP objects (or `SoapFault`s) out the other end. A shared curl handle per endpoint
+enables TLS session, DNS and cookie reuse across the batch.
+
+## Testing
+
+The test suite has two layers:
+
+- **Hermetic tests** (`tests/Hermetic`) run against a local SOAP server started on a free
+  port — over both **HTTP** and **TLS** (with a generated self-signed certificate). They need
+  no network access and run by default.
+- **External integration tests** (`tests/Crcind`, `tests/Dne`) hit public demo SOAP services.
+  They are tagged with the `external` group, excluded from the default run, and skip
+  automatically when the host is unreachable.
+
+```bash
+composer install
+
+composer test          # hermetic suite only (default)
+composer check-style   # PSR-2 coding standard
+composer stan          # PHPStan static analysis
+composer lint          # php-l syntax lint
+composer ci            # lint + style + stan + tests
+
+vendor/bin/phpunit --group external   # opt into the external integration tests
+```
 
 ## Contributing
 
-Anyone is welcome to [contribute](CONTRIBUTING.md), however, if you decide to get involved, please take a moment to review the guidelines:
+Contributions are welcome — please review the [guidelines](CONTRIBUTING.md):
 
-* [Only one feature or change per pull request](CONTRIBUTING.md#only-one-feature-or-change-per-pull-request)
-* [Write meaningful commit messages](CONTRIBUTING.md#write-meaningful-commit-messages)
-* [Follow the existing coding standards](CONTRIBUTING.md#follow-the-existing-coding-standards)
+- [One feature or change per pull request](CONTRIBUTING.md#only-one-feature-or-change-per-pull-request)
+- [Write meaningful commit messages](CONTRIBUTING.md#write-meaningful-commit-messages)
+- [Follow the existing coding standards](CONTRIBUTING.md#follow-the-existing-coding-standards)
 
 ## License
 
-The code is available under the [MIT license](LICENSE.md).
+Released under the [MIT license](LICENSE.md).
