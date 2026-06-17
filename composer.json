@@ -33,6 +33,8 @@
       "@stan",
       "@test"
     ],
+    "dev-server": "php -S 127.0.0.1:8999 tests/Fixtures/http-server.php",
+    "test-external": "phpunit --group external",
     "update-dev": "composer update",
     "update-prod": "composer update --no-dev"
   },

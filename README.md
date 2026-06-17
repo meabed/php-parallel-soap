@@ -164,6 +164,9 @@ immediately. In parallel mode the handles are accumulated and executed together 
 ordinary PHP objects (or `SoapFault`s) out the other end. A shared curl handle per endpoint
 enables TLS session, DNS and cookie reuse across the batch.
 
+For a deeper walkthrough — the request lifecycle, the local SOAP server used by the tests, and
+diagrams — see [docs/development.md](docs/development.md).
+
 ## Testing
 
 The test suite has two layers:
@@ -186,6 +189,9 @@ composer ci            # lint + style + stan + tests
 
 vendor/bin/phpunit --group external   # opt into the external integration tests
 ```
+
+You can also run the local SOAP server on its own with `composer dev-server` and call it
+directly — see [docs/development.md](docs/development.md) for a worked example.
 
 ## Contributing
 
