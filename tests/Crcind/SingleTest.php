@@ -2,13 +2,15 @@
 
 namespace Tests\Crcind;
 
+use PHPUnit\Framework\Attributes\Group;
 use Tests\Base\BaseCrcindCase;
 
+#[Group('external')]
 class SingleTest extends BaseCrcindCase
 {
-    public function __construct($name = null, array $data = [], string $dataName = '')
+    protected function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
         $this->parallelSoapClient->setMulti(false);
     }
 

@@ -2,13 +2,15 @@
 
 namespace Tests\Crcind;
 
+use PHPUnit\Framework\Attributes\Group;
 use Tests\Base\BaseCrcindCase;
 
+#[Group('external')]
 class ParallelTest extends BaseCrcindCase
 {
-    public function __construct($name = null, array $data = [], string $dataName = '')
+    protected function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
         $this->parallelSoapClient->setMulti(true);
         $this->parallelSoapClient->setCurlOptions(
             [
@@ -94,7 +96,7 @@ class ParallelTest extends BaseCrcindCase
 
         // this is only available on trace=1 option in soapclient
 
-        $this->assertEquals(\SoapFault::class, get_class($rs[$req4]));
+        $this->assertInstanceOf(\SoapFault::class, $rs[$req4]);
         $this->assertStringContainsString('looks like we got no XML document', $rs[$req4]->getMessage());
         //$this->assertStringContainsString('Bad Request', $exceptionMessage);
     }

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Calculator WSDL used by the hermetic test suite.
+
+  The <soap:address> below is only a placeholder: the tests always override the
+  endpoint at runtime through the SoapClient `location` option so the very same
+  WSDL can be pointed at the local HTTP or HTTPS test server.
+-->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:tns="urn:calculator"
+                  targetNamespace="urn:calculator">
+  <wsdl:types>
+    <xsd:schema targetNamespace="urn:calculator" elementFormDefault="qualified">
+      <xsd:complexType name="BinaryOp">
+        <xsd:sequence>
+          <xsd:element name="intA" type="xsd:int"/>
+          <xsd:element name="intB" type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:element name="Add" type="tns:BinaryOp"/>
+      <xsd:element name="AddResponse">
+        <xsd:complexType><xsd:sequence>
+          <xsd:element name="AddResult" type="xsd:int"/>
+        </xsd:sequence></xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="Subtract" type="tns:BinaryOp"/>
+      <xsd:element name="SubtractResponse">
+        <xsd:complexType><xsd:sequence>
+          <xsd:element name="SubtractResult" type="xsd:int"/>
+        </xsd:sequence></xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="Multiply" type="tns:BinaryOp"/>
+      <xsd:element name="MultiplyResponse">
+        <xsd:complexType><xsd:sequence>
+          <xsd:element name="MultiplyResult" type="xsd:int"/>
+        </xsd:sequence></xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="Divide" type="tns:BinaryOp"/>
+      <xsd:element name="DivideResponse">
+        <xsd:complexType><xsd:sequence>
+          <xsd:element name="DivideResult" type="xsd:int"/>
+        </xsd:sequence></xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="Crash">
+        <xsd:complexType><xsd:sequence/></xsd:complexType>
+      </xsd:element>
+      <xsd:element name="CrashResponse">
+        <xsd:complexType><xsd:sequence>
+          <xsd:element name="CrashResult" type="xsd:string"/>
+        </xsd:sequence></xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+
+  <wsdl:message name="AddIn"><wsdl:part name="parameters" element="tns:Add"/></wsdl:message>
+  <wsdl:message name="AddOut"><wsdl:part name="parameters" element="tns:AddResponse"/></wsdl:message>
+  <wsdl:message name="SubtractIn"><wsdl:part name="parameters" element="tns:Subtract"/></wsdl:message>
+  <wsdl:message name="SubtractOut"><wsdl:part name="parameters" element="tns:SubtractResponse"/></wsdl:message>
+  <wsdl:message name="MultiplyIn"><wsdl:part name="parameters" element="tns:Multiply"/></wsdl:message>
+  <wsdl:message name="MultiplyOut"><wsdl:part name="parameters" element="tns:MultiplyResponse"/></wsdl:message>
+  <wsdl:message name="DivideIn"><wsdl:part name="parameters" element="tns:Divide"/></wsdl:message>
+  <wsdl:message name="DivideOut"><wsdl:part name="parameters" element="tns:DivideResponse"/></wsdl:message>
+  <wsdl:message name="CrashIn"><wsdl:part name="parameters" element="tns:Crash"/></wsdl:message>
+  <wsdl:message name="CrashOut"><wsdl:part name="parameters" element="tns:CrashResponse"/></wsdl:message>
+
+  <wsdl:portType name="CalculatorPortType">
+    <wsdl:operation name="Add">
+      <wsdl:input message="tns:AddIn"/><wsdl:output message="tns:AddOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="Subtract">
+      <wsdl:input message="tns:SubtractIn"/><wsdl:output message="tns:SubtractOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="Multiply">
+      <wsdl:input message="tns:MultiplyIn"/><wsdl:output message="tns:MultiplyOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="Divide">
+      <wsdl:input message="tns:DivideIn"/><wsdl:output message="tns:DivideOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="Crash">
+      <wsdl:input message="tns:CrashIn"/><wsdl:output message="tns:CrashOut"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="CalculatorBinding" type="tns:CalculatorPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Add">
+      <soap:operation soapAction="urn:calculator#Add"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Subtract">
+      <soap:operation soapAction="urn:calculator#Subtract"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Multiply">
+      <soap:operation soapAction="urn:calculator#Multiply"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Divide">
+      <soap:operation soapAction="urn:calculator#Divide"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Crash">
+      <soap:operation soapAction="urn:calculator#Crash"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="Calculator">
+    <wsdl:port name="CalculatorPort" binding="tns:CalculatorBinding">
+      <soap:address location="http://localhost/soap"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
