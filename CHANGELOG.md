@@ -5,7 +5,14 @@ All notable changes to `meabed/php-parallel-soap` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.0.0] - 2026-06-17
+
+### Breaking
+
+- **Renamed the namespace** from `Soap\` to `Meabed\ParallelSoap\`. PHP 8.4+ now claims the
+  top-level `Soap\` namespace for the SOAP extension itself (`Soap\Url`, `Soap\Sdl`), so the
+  client moved out of it. Update your imports from `Soap\ParallelSoapClient` to
+  `Meabed\ParallelSoap\ParallelSoapClient`. See [UPGRADING.md](UPGRADING.md). ([#175])
 
 ### Fixed
 
@@ -46,14 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Retired the Scrutinizer and StyleCI configurations. Their roles are now covered by the
   GitHub Actions pipeline (PHPStan for static analysis, PHP_CodeSniffer for PSR-2).
 
-### Known issues
-
-- The top-level `Soap\` namespace is now claimed by the PHP SOAP extension (`Soap\Url`,
-  `Soap\Sdl` since PHP 8.4). Renaming the package namespace is a breaking change and is being
-  tracked for a future major release. ([#175])
-
 [#179]: https://github.com/meabed/php-parallel-soap/issues/179
 [#175]: https://github.com/meabed/php-parallel-soap/issues/175
 [#47]: https://github.com/meabed/php-parallel-soap/issues/47
 [#11]: https://github.com/meabed/php-parallel-soap/issues/11
-[Unreleased]: https://github.com/meabed/php-parallel-soap/compare/3.0.1...HEAD
+[4.0.0]: https://github.com/meabed/php-parallel-soap/compare/3.0.1...4.0.0

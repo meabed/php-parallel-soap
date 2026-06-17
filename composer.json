@@ -52,7 +52,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Soap\\": "src/"
+      "Meabed\\ParallelSoap\\": "src/"
     }
   },
   "autoload-dev": {
@@ -62,7 +62,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "3.0.x-dev"
+      "dev-master": "4.0.x-dev"
     }
   },
   "minimum-stability": "dev",

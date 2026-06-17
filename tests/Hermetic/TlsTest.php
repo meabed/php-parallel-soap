@@ -3,7 +3,7 @@
 namespace Tests\Hermetic;
 
 use PHPUnit\Framework\TestCase;
-use Soap\ParallelSoapClient;
+use Meabed\ParallelSoap\ParallelSoapClient;
 use Tests\Support\TlsSoapTestServer;
 
 /**

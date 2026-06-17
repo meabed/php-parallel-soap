@@ -2,7 +2,7 @@
 
 namespace Tests\Hermetic;
 
-use Soap\ParallelSoapClient;
+use Meabed\ParallelSoap\ParallelSoapClient;
 
 class ParallelTest extends HermeticTestCase
 {

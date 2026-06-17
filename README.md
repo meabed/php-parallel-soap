@@ -53,9 +53,11 @@ options (such as TLS session sharing and connection reuse).
 
 The library is tested in CI against PHP **8.1, 8.2, 8.3, 8.4 and 8.5** (including a TLS suite).
 
-> **Upgrading?** Versions before this release fatal-error on PHP 8.4/8.5 (the native
-> `SoapClient::__doRequest()` signature changed). Make sure you are on the latest release on
-> those PHP versions. See the [CHANGELOG](CHANGELOG.md).
+> **Upgrading from 3.x?** 4.0 moves the client out of the now-reserved `Soap\` namespace into
+> `Meabed\ParallelSoap\`. Change `use Soap\ParallelSoapClient;` to
+> `use Meabed\ParallelSoap\ParallelSoapClient;` — the API is otherwise unchanged. 3.x also
+> fatal-errors on PHP 8.4/8.5, so upgrading is required there. See [UPGRADING.md](UPGRADING.md)
+> and the [CHANGELOG](CHANGELOG.md).
 
 ## Installation
 
@@ -70,7 +72,7 @@ composer require meabed/php-parallel-soap
 Behaves exactly like the native `SoapClient`, but the transport is curl:
 
 ```php
-use Soap\ParallelSoapClient;
+use Meabed\ParallelSoap\ParallelSoapClient;
 
 $client = new ParallelSoapClient($wsdl, [
     'trace' => true,

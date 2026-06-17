@@ -13,7 +13,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Soap\ParallelSoapClient;
+use Meabed\ParallelSoap\ParallelSoapClient;
 
 /** @var string $wsdl Replace with the WSDL of the service you want to call. */
 $wsdl = 'https://example.com/service?wsdl';

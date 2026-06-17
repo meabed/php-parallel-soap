@@ -1,6 +1,6 @@
 <?php
 
-namespace Soap;
+namespace Meabed\ParallelSoap;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

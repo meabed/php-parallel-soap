@@ -133,7 +133,7 @@ endpoint is overridden with `location`:
 ```php
 require 'vendor/autoload.php';
 
-use Soap\ParallelSoapClient;
+use Meabed\ParallelSoap\ParallelSoapClient;
 
 $client = new ParallelSoapClient(__DIR__ . '/tests/Fixtures/calculator.wsdl', [
     'location' => 'http://127.0.0.1:8999',
