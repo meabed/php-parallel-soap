@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   excluded from the default test run, and skip automatically when the host is unreachable.
 - Modernised `renovate.json`, `.gitattributes`, CI workflows and the README.
 
+### Removed
+
+- Retired the Scrutinizer and StyleCI configurations. Their roles are now covered by the
+  GitHub Actions pipeline (PHPStan for static analysis, PHP_CodeSniffer for PSR-2).
+
 ### Known issues
 
 - The top-level `Soap\` namespace is now claimed by the PHP SOAP extension (`Soap\Url`,
